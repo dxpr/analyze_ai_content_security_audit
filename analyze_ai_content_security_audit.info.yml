@@ -1,0 +1,9 @@
+name: 'Analyze AI Content Security Audit'
+type: module
+description: 'A submodule for Analyze that provides AI-powered content security analysis capabilities.'
+package: Analyze
+core_version_requirement: ^10.2 || ^11
+dependencies:
+  - analyze:analyze
+  - ai:ai
+configure: analyze_ai_content_security_audit.settings

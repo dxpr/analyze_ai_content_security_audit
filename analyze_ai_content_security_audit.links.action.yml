@@ -1,0 +1,11 @@
+analyze_ai_content_security_audit.vector.add:
+  route_name: analyze_ai_content_security_audit.vector.add
+  title: 'Add security vector'
+  appears_on:
+    - analyze_ai_content_security_audit.settings
+
+analyze_ai_content_security_audit.batch:
+  route_name: analyze_ai_content_security_audit.batch
+  title: 'Batch analysis'
+  appears_on:
+    - analyze_ai_content_security_audit.settings

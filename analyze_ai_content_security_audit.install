@@ -1,0 +1,137 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the analyze_ai_content_security_audit module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function analyze_ai_content_security_audit_schema() {
+  $schema = [];
+
+  $schema['analyze_ai_content_security_audit_results'] = [
+    'description' => 'Stores AI content security audit results for content entities.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique analysis result ID.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'The entity type being analyzed.',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The entity ID being analyzed.',
+      ],
+      'entity_revision_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'The entity revision ID (if applicable).',
+      ],
+      'langcode' => [
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'description' => 'The language code of the analyzed content.',
+      ],
+      'vector_id' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'The security vector identifier (e.g., "pii_disclosure", "credentials_disclosure").',
+      ],
+      'score' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The security risk score (0 to 100).',
+      ],
+      'content_hash' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'SHA256 hash of the analyzed content.',
+      ],
+      'config_hash' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => 'MD5 hash of the security vector configuration.',
+      ],
+      'analyzed_timestamp' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Unix timestamp when the analysis was performed.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'entity_vector_lang' => ['entity_type', 'entity_id', 'vector_id', 'langcode'],
+    ],
+    'indexes' => [
+      'content_hash' => ['content_hash'],
+      'vector_id' => ['vector_id'],
+      'analyzed_timestamp' => ['analyzed_timestamp'],
+      'entity_type_bundle' => ['entity_type', 'entity_id'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function analyze_ai_content_security_audit_install() {
+  // Create tables from schema.
+  $schema = analyze_ai_content_security_audit_schema();
+  $database = \Drupal::database();
+  foreach ($schema as $table_name => $table_spec) {
+    if (!$database->schema()->tableExists($table_name)) {
+      $database->schema()->createTable($table_name, $table_spec);
+    }
+  }
+
+  // Initialize default security vectors.
+  $storage = \Drupal::service('analyze_ai_content_security_audit.storage');
+  
+  $default_vectors = [
+    'pii_disclosure' => [
+      'label' => 'PII Disclosure',
+      'description' => 'Identifies potential disclosure of personally identifiable information (PII) in content.',
+      'weight' => 0,
+    ],
+    'credentials_disclosure' => [
+      'label' => 'Credentials Disclosure',
+      'description' => 'Detects potential exposure of credentials, API keys, passwords, or other sensitive authentication data.',
+      'weight' => 10,
+    ],
+  ];
+
+  foreach ($default_vectors as $vector_id => $vector_data) {
+    $storage->saveVector($vector_id, $vector_data);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function analyze_ai_content_security_audit_uninstall() {
+  // Clean up any remaining data if tables exist.
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  
+  if ($schema->tableExists('analyze_ai_content_security_audit_results')) {
+    $database->delete('analyze_ai_content_security_audit_results')->execute();
+  }
+}
