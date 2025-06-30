@@ -2,16 +2,15 @@ uuid: 87654321-4321-4321-4321-456789abcdef
 langcode: en
 status: true
 dependencies:
-  config:
-    - system.menu.admin
   module:
     - analyze_ai_content_security_audit
     - node
     - user
+    - views_color_scales
 _core:
-  default_config_hash: SecurityAuditResultsViewHash
+  default_config_hash: 17wEs9pWeZkDSyCIHfCSVYFccaeTRg6ygakJy-zkdR0
 id: content_security_audit_results
-label: 'Content Security Audit Results'
+label: 'AI Content Security Audit Analysis'
 module: views
 description: 'Display AI content security audit analysis results and insights.'
 tag: ''
@@ -24,6 +23,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
+      title: 'Content Security Audit Results'
       fields:
         title:
           id: title
