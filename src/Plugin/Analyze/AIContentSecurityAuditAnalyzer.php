@@ -21,12 +21,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * A security analyzer that uses AI to analyze content security risks.
  *
  * @Analyze(
- *   id = "content_security_audit_analyzer",
+ *   id = "analyze_ai_content_security_audit_analyzer",
  *   label = @Translation("Content Security Audit"),
  *   description = @Translation("Analyzes content for security risks using AI.")
  * )
  */
-final class ContentSecurityAuditAnalyzer extends AnalyzePluginBase {
+final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
   /**
    * The AI provider manager.

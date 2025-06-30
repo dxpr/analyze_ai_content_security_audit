@@ -9,7 +9,7 @@ dependencies:
     - views_color_scales
 _core:
   default_config_hash: 17wEs9pWeZkDSyCIHfCSVYFccaeTRg6ygakJy-zkdR0
-id: content_security_audit_results
+id: ai_content_security_audit_results
 label: 'AI Content Security Audit Analysis'
 module: views
 description: 'Display AI content security audit analysis results and insights.'
