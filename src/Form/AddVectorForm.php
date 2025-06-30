@@ -2,10 +2,10 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Form;
 
-use Drupal\Core\Url;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -153,7 +153,7 @@ class AddVectorForm extends FormBase {
     ];
 
     $config->set('vectors', $vectors)->save();
-    $this->messenger()->addStatus($this->t('Added new security vector %label.', ['%label' => $values['label']]));
+    $this->messenger()->addStatus($this->t('Added new security vector %label.', ['%label' => $values['label']]));     
     $form_state->setRedirectUrl(Url::fromRoute('analyze_ai_content_security_audit.settings'));
   }
 

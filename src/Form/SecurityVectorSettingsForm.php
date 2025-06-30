@@ -2,9 +2,9 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Form;
 
-use Drupal\Core\Url;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Configure security vector analysis settings.
@@ -174,8 +174,10 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
       ->set('vectors', $vectors)
       ->save();
 
-    // Invalidate all cached security analysis results since configuration changed.
-    \Drupal::service('analyze_ai_content_security_audit.storage')->invalidateConfigCache();
+    // Invalidate all cached security analysis results since configuration
+    // changed.
+    \Drupal::service('analyze_ai_content_security_audit.storage')
+      ->invalidateConfigCache();
 
     parent::submitForm($form, $form_state);
   }

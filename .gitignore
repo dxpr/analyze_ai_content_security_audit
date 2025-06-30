@@ -1,0 +1,27 @@
+# Claude AI working directory
+.claude/
+
+# Drupal temporary directory for linting
+drupal/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Composer
+vendor/
+composer.lock
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Temporary files
+*.tmp
+*.swp
+*~

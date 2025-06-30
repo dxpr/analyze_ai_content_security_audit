@@ -2,11 +2,11 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Provides a form for deleting a security vector.
@@ -114,16 +114,16 @@ class DeleteVectorForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
     $storage = \Drupal::service('analyze_ai_content_security_audit.storage');
-    
+
     $config = $this->configFactory->get('analyze_ai_content_security_audit.settings');
     $vectors = $config->get('vectors');
 
     if (isset($vectors[$this->vectorId])) {
       $label = $vectors[$this->vectorId]['label'];
-      
+
       // Use storage service to properly delete vector and associated data.
       $storage->deleteVector($this->vectorId);
-      
+
       $this->messenger()->addStatus($this->t('The security vector %label has been deleted.', [
         '%label' => $label,
       ]));

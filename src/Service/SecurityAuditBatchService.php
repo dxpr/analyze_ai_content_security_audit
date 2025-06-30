@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_content_security_audit\Service;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 
 /**
  * Service for batch processing security audit analysis.
@@ -37,15 +36,15 @@ final class SecurityAuditBatchService {
    */
   public function getEntitiesForAnalysis(array $entity_bundles, bool $force_refresh = FALSE, int $limit = 0): array {
     $entities = [];
-    
+
     foreach ($entity_bundles as $entity_bundle) {
       [$entity_type_id, $bundle] = explode(':', $entity_bundle);
-      
+
       $query = $this->entityTypeManager->getStorage($entity_type_id)
         ->getQuery()
         ->accessCheck(TRUE)
         ->condition('type', $bundle);
-      
+
       // Only include published content.
       if ($entity_type_id === 'node') {
         $query->condition('status', 1);
@@ -58,7 +57,7 @@ final class SecurityAuditBatchService {
           $query->condition($entity_type_id === 'node' ? 'nid' : 'id', $analyzed_ids, 'NOT IN');
         }
       }
-      
+
       if ($limit > 0) {
         $remaining = $limit - count($entities);
         if ($remaining <= 0) {
@@ -66,9 +65,9 @@ final class SecurityAuditBatchService {
         }
         $query->range(0, $remaining);
       }
-      
+
       $ids = $query->execute();
-      
+
       foreach ($ids as $id) {
         $entities[] = [
           'entity_type' => $entity_type_id,
@@ -114,15 +113,16 @@ final class SecurityAuditBatchService {
             if ($force_refresh) {
               $this->storage->deleteScores($entity);
             }
-            
+
             // Capture any output to prevent JSON corruption.
             ob_start();
             $analyzer->renderSummary($entity);
             ob_end_clean();
-            
+
             $context['results']['processed']++;
           }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           $context['results']['errors'][] = $this->t('Error processing @type @id: @message', [
             '@type' => $entity_data['entity_type'],
             '@id' => $entity_data['entity_id'],
@@ -131,7 +131,8 @@ final class SecurityAuditBatchService {
         }
 
       }
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $context['results']['errors'][] = $this->t('Batch processing error: @message', [
         '@message' => $e->getMessage(),
       ])->render();
@@ -142,10 +143,11 @@ final class SecurityAuditBatchService {
       '@max' => $context['sandbox']['total_entities'],
     ])->render();
 
-    // Calculate progress based on total entities processed vs total entities
+    // Calculate progress based on total entities processed vs total entities.
     if ($context['sandbox']['total_entities'] > 0) {
       $context['finished'] = $context['results']['processed'] / $context['sandbox']['total_entities'];
-    } else {
+    }
+    else {
       $context['finished'] = 1;
     }
   }
@@ -159,7 +161,7 @@ final class SecurityAuditBatchService {
   public function getAvailableEntityBundles(): array {
     $config = \Drupal::config('analyze.settings');
     $status = $config->get('status') ?? [];
-    
+
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
@@ -190,17 +192,17 @@ final class SecurityAuditBatchService {
     $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', $bundle);
-    
+
     $all_ids = $query->execute();
     $analyzed_ids = [];
-    
+
     foreach ($all_ids as $id) {
       $entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id);
       if ($entity && !empty($this->storage->getScores($entity))) {
         $analyzed_ids[] = $id;
       }
     }
-    
+
     return $analyzed_ids;
   }
 

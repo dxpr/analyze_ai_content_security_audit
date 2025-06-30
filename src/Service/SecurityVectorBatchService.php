@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_content_security_audit\Service;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 
 /**
  * Service for batch processing security vector analysis.
@@ -37,15 +36,15 @@ final class SecurityVectorBatchService {
    */
   public function getEntitiesForAnalysis(array $entity_bundles, bool $force_refresh = FALSE, int $limit = 0): array {
     $entities = [];
-    
+
     foreach ($entity_bundles as $entity_bundle) {
       [$entity_type_id, $bundle] = explode(':', $entity_bundle);
-      
+
       $query = $this->entityTypeManager->getStorage($entity_type_id)
         ->getQuery()
         ->accessCheck(TRUE)
         ->condition('type', $bundle);
-      
+
       // Only include published content.
       if ($entity_type_id === 'node') {
         $query->condition('status', 1);
@@ -58,7 +57,7 @@ final class SecurityVectorBatchService {
           $query->condition($entity_type_id === 'node' ? 'nid' : 'id', $analyzed_ids, 'NOT IN');
         }
       }
-      
+
       if ($limit > 0) {
         $remaining = $limit - count($entities);
         if ($remaining <= 0) {
@@ -66,9 +65,9 @@ final class SecurityVectorBatchService {
         }
         $query->range(0, $remaining);
       }
-      
+
       $ids = $query->execute();
-      
+
       foreach ($ids as $id) {
         $entities[] = [
           'entity_type' => $entity_type_id,
@@ -113,15 +112,16 @@ final class SecurityVectorBatchService {
             if ($force_refresh) {
               $this->storage->deleteScores($entity);
             }
-            
+
             // Capture any output to prevent JSON corruption.
             ob_start();
             $analyzer->renderSummary($entity);
             ob_end_clean();
-            
+
             $context['results']['processed']++;
           }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           $context['results']['errors'][] = $this->t('Error processing @type @id: @message', [
             '@type' => $entity_data['entity_type'],
             '@id' => $entity_data['entity_id'],
@@ -131,7 +131,8 @@ final class SecurityVectorBatchService {
 
         $context['sandbox']['progress']++;
       }
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $context['results']['errors'][] = $this->t('Batch processing error: @message', [
         '@message' => $e->getMessage(),
       ])->render();
@@ -158,18 +159,18 @@ final class SecurityVectorBatchService {
    */
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
     $database = \Drupal::database();
-    
+
     // Get entities analyzed in the last 7 days with current config.
     $current_config_hash = $this->storage->generateConfigHash();
     $week_ago = time() - (7 * 24 * 60 * 60);
-    
+
     $query = $database->select('analyze_ai_content_security_audit_results', 'r')
       ->fields('r', ['entity_id'])
       ->condition('entity_type', $entity_type_id)
       ->condition('config_hash', $current_config_hash)
       ->condition('analyzed_timestamp', $week_ago, '>')
       ->distinct();
-    
+
     return $query->execute()->fetchCol();
   }
 
@@ -182,7 +183,7 @@ final class SecurityVectorBatchService {
   public function getAvailableEntityBundles(): array {
     $config = \Drupal::config('analyze.settings');
     $status = $config->get('status') ?? [];
-    
+
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
@@ -190,10 +191,10 @@ final class SecurityVectorBatchService {
           // Get human-readable names.
           $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
           $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);
-          
+
           $entity_label = $entity_type->getLabel();
           $bundle_label = $bundle_info[$bundle]['label'] ?? $bundle;
-          
+
           $options["{$entity_type_id}:{$bundle}"] = "{$entity_label} - {$bundle_label}";
         }
       }

@@ -2,21 +2,20 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Plugin\Analyze;
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Url;
-use Drupal\analyze\AnalyzePluginBase;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
+use Drupal\analyze\AnalyzePluginBase;
+use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Link;
-use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\RendererInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A security analyzer that uses AI to analyze content security risks.
@@ -250,7 +249,7 @@ final class ContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
     // Try to get cached scores first.
     $scores = $this->storage->getScores($entity);
-    
+
     // If no cached scores, perform analysis.
     if (empty($scores)) {
       $scores = $this->analyzeSecurityRisks($entity);
@@ -264,7 +263,7 @@ final class ContentSecurityAuditAnalyzer extends AnalyzePluginBase {
       $max_score = max($scores);
       $vector_id = array_search($max_score, $scores);
       $vector = $enabled_vectors[$vector_id] ?? reset($enabled_vectors);
-      
+
       // Convert 0 to 100 range to 0 to 1 for gauge.
       $gauge_value = $max_score / 100;
 
@@ -310,7 +309,7 @@ final class ContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
     // Try to get cached scores first.
     $scores = $this->storage->getScores($entity);
-    
+
     // If no cached scores, perform analysis.
     if (empty($scores)) {
       $scores = $this->analyzeSecurityRisks($entity);

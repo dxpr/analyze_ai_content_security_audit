@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./scripts/run-drupal-lint-auto-fix.sh:*)",
+      "Bash(./scripts/run-drupal-lint.sh:*)",
+      "Bash(phpcs:*)",
+      "Bash(./scripts/run-drupal-check.sh:*)",
+      "Bash(./drupal/vendor/bin/drupal-check src/)",
+      "Bash(./drupal/vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme --ignore=vendor src/)",
+      "Bash(./drupal/vendor/bin/phpcbf --standard=Drupal --extensions=php,module,inc,install,test,profile,theme --ignore=vendor src/)",
+      "Bash(./vendor/bin/drupal-check:*)",
+      "Bash(./drupal/vendor/bin/phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore=vendor src/)",
+      "Bash(chmod:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}
