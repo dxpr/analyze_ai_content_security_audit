@@ -48,8 +48,9 @@ final class SecurityAuditBatchForm extends FormBase {
     if (empty($available_bundles)) {
       $configure_url = Url::fromRoute('analyze.analyze_settings');
       $form['no_bundles'] = [
-        '#markup' => $this->t('<p>No content types have security audit analysis enabled. Please <a href="@url">configure the Analyze module</a> first.</p>', [
+        '#markup' => $this->t('<p>No content types have security audit analysis enabled. <a href="@url">Configure content types</a> to enable security audit analysis, or <a href="@settings_url">configure security vectors</a> to set up security analysis criteria.</p>', [
           '@url' => $configure_url->toString(),
+          '@settings_url' => Url::fromRoute('analyze_ai_content_security_audit.settings')->toString(),
         ]),
       ];
       return $form;

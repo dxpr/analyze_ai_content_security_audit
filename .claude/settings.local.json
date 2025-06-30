@@ -12,7 +12,8 @@
       "Bash(./drupal/vendor/bin/phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme --ignore=vendor src/)",
       "Bash(chmod:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }

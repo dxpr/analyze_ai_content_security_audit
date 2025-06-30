@@ -214,7 +214,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     // append the settings link.
     if ($message === 'No chat AI provider is configured for security analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
-      $message = $this->t('No chat AI provider is configured for security analysis. @link', ['@link' => $link->toString()]);
+      $message = $this->t('No chat AI provider is configured for security analysis. @link to set up AI services for security analysis.', ['@link' => $link->toString()]);
     }
 
     return [
@@ -239,12 +239,14 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $bundle = $entity->bundle();
 
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
-      return $this->createStatusTable('Content security audit is not enabled for this content type.');
+      $settings_link = Link::createFromRoute($this->t('Enable content security audit'), 'analyze.analyze_settings')->toString();
+      return $this->createStatusTable($this->t('Content security audit is not enabled for this content type. @link to configure content types.', ['@link' => $settings_link]));
     }
 
     $enabled_vectors = $this->getEnabledVectors($entity->getEntityTypeId(), $entity->bundle());
     if (empty($enabled_vectors)) {
-      return $this->createStatusTable('No security vectors are currently enabled.');
+      $vectors_link = Link::createFromRoute($this->t('Configure security vectors'), 'analyze_ai_content_security_audit.settings')->toString();
+      return $this->createStatusTable($this->t('No security vectors are currently enabled. @link to select security vectors to analyze.', ['@link' => $vectors_link]));
     }
 
     // Try to get cached scores first.
@@ -283,10 +285,11 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     // If no scores available but everything is configured correctly,
     // show a helpful message.
     if (!empty($content = $this->getHtml($entity))) {
-      return $this->createStatusTable('No chat AI provider is configured for security analysis.');
+      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+      return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
     }
 
-    return $this->createStatusTable('No content available for analysis.');
+    return $this->createStatusTable($this->t('This content has no text available for security analysis. Add content such as body text, fields, or descriptions to enable analysis.'));
   }
 
   /**
@@ -299,12 +302,14 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $bundle = $entity->bundle();
 
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
-      return $this->createStatusTable('Content security audit is not enabled for this content type.');
+      $settings_link = Link::createFromRoute($this->t('Enable content security audit'), 'analyze.analyze_settings')->toString();
+      return $this->createStatusTable($this->t('Content security audit is not enabled for this content type. @link to configure content types.', ['@link' => $settings_link]));
     }
 
     $enabled_vectors = $this->getEnabledVectors($entity->getEntityTypeId(), $entity->bundle());
     if (empty($enabled_vectors)) {
-      return $this->createStatusTable('No security vectors are currently enabled.');
+      $vectors_link = Link::createFromRoute($this->t('Configure security vectors'), 'analyze_ai_content_security_audit.settings')->toString();
+      return $this->createStatusTable($this->t('No security vectors are currently enabled. @link to select security vectors to analyze.', ['@link' => $vectors_link]));
     }
 
     // Try to get cached scores first.
@@ -319,7 +324,8 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     }
 
     if (empty($scores)) {
-      return $this->createStatusTable('No chat AI provider is configured for security analysis.');
+      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+      return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
     }
 
     // Build gauges for each enabled vector.
