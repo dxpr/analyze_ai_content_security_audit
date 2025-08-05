@@ -100,7 +100,7 @@ final class SecurityVectorBatchService {
 
     try {
       $analyzer = \Drupal::service('plugin.manager.analyze')
-        ->createInstance('content_security_audit_analyzer');
+        ->createInstance('analyze_ai_content_security_audit_analyzer');
 
       foreach ($entities as $entity_data) {
         try {
@@ -187,7 +187,7 @@ final class SecurityVectorBatchService {
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
-        if (isset($analyzers['content_security_audit_analyzer'])) {
+        if (isset($analyzers['analyze_ai_content_security_audit_analyzer'])) {
           // Get human-readable names.
           $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
           $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);

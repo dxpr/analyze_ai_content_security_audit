@@ -101,7 +101,7 @@ final class SecurityAuditBatchService {
 
     try {
       $analyzer = \Drupal::service('plugin.manager.analyze')
-        ->createInstance('content_security_audit_analyzer');
+        ->createInstance('analyze_ai_content_security_audit_analyzer');
 
       foreach ($entities as $entity_data) {
         try {
@@ -165,7 +165,7 @@ final class SecurityAuditBatchService {
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
-        if (isset($analyzers['content_security_audit_analyzer'])) {
+        if (isset($analyzers['analyze_ai_content_security_audit_analyzer'])) {
           $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);
           $label = $bundle_info[$bundle]['label'] ?? $bundle;
           $options["{$entity_type_id}:{$bundle}"] = "{$entity_type_id} - {$label}";

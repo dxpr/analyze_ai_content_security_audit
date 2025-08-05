@@ -1,0 +1,45 @@
+<p>
+  The AI Content Security Audit is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem. It provides AI-powered security analysis for Drupal content, identifying potential security risks such as PII disclosure, credentials exposure, and other sensitive information leaks.
+</p>
+
+<h3 id="module-project--features">Features</h3>
+<ul>
+  <li>Security vector analysis:
+    <ul>
+      <li>Configurable security vectors through admin UI</li>
+      <li>Risk scoring from 0 (no risk) to 100 (high risk)</li>
+      <li>Add/delete custom security vectors</li>
+    </ul>
+  </li>
+  <li>Pre-configured security vectors:
+    <ul>
+      <li>PII Disclosure - Identifies potential disclosure of personally identifiable information</li>
+      <li>Credentials Disclosure - Detects exposure of API keys, passwords, or authentication data</li>
+    </ul>
+  </li>
+  <li>Batch security analysis for existing content</li>
+  <li>Per-vector batch processing for focused analysis</li>
+  <li>Visual risk indicators for quick assessment</li>
+  <li>Integration with the Analyze framework</li>
+  <li>Views integration for security reporting and dashboards</li>
+</ul>
+
+<h3 id="module-project--post-installation">Post-installation</h3>
+<ol>
+  <li>Configure AI provider settings at /admin/config/ai/providers</li>
+  <li>Manage security vectors at /admin/config/analyze/content-security-audit</li>
+  <li>Enable/disable the analyzer per content type at /admin/config/content/analyze-settings</li>
+  <li>Configure permissions at /admin/people/permissions#module-analyze_ai_content_security_audit</li>
+  <li>Access security audit through the Analyze tab on content</li>
+  <li>Run batch security analysis at /admin/config/analyze/content-security-audit/batch</li>
+</ol>
+
+<h3 id="module-project--additional-requirements">Additional requirements</h3>
+<p>
+  This module requires:
+  <ul>
+    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module</li>
+    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured provider</li>
+    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module (provides colored tables for report page)</li>
+  </ul>
+</p>
