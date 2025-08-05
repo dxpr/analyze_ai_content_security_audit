@@ -135,3 +135,44 @@ function analyze_ai_content_security_audit_uninstall() {
     $database->delete('analyze_ai_content_security_audit_results')->execute();
   }
 }
+
+/**
+ * Update plugin ID to ensure consistent analyzer naming convention.
+ */
+function analyze_ai_content_security_audit_update_8001() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('analyze.settings');
+  $status = $config->get('status') ?? [];
+  $updated = FALSE;
+
+  // List of potential old plugin IDs that might need updating.
+  $old_plugin_ids = [
+    'ai_content_security_audit_analyzer',
+    'content_security_audit_analyzer',
+    'security_audit_analyzer',
+  ];
+
+  // Update plugin IDs in analyze.settings configuration.
+  foreach ($status as $entity_type => $bundles) {
+    foreach ($bundles as $bundle => $analyzers) {
+      foreach ($old_plugin_ids as $old_id) {
+        if (isset($analyzers[$old_id])) {
+          // Copy old setting to new plugin ID.
+          $analyzers['analyze_ai_content_security_audit_analyzer'] = $analyzers[$old_id];
+          // Remove old plugin ID.
+          unset($analyzers[$old_id]);
+          // Update the configuration.
+          $status[$entity_type][$bundle] = $analyzers;
+          $updated = TRUE;
+        }
+      }
+    }
+  }
+
+  if ($updated) {
+    $config->set('status', $status)->save();
+    return t('Updated content security audit analyzer plugin ID to "analyze_ai_content_security_audit_analyzer" in analyze settings.');
+  }
+
+  return t('No content security audit analyzer settings found to update.');
+}

@@ -1,30 +1,38 @@
-<p>
-  The AI Content Security Audit is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem. It provides AI-powered security analysis for Drupal content, identifying potential security risks such as PII disclosure, credentials exposure, and other sensitive information leaks.
-</p>
+<h2>AI-Powered Content Security Risk Analysis</h2>
 
-<h3 id="module-project--features">Features</h3>
+<blockquote>Protect your organization from security risks with intelligent AI analysis that identifies potential PII disclosure, credential exposure, and other sensitive information leaks in your content before publication.</blockquote>
+
+<p>The AI Content Security Audit is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem, providing automated security analysis for Drupal content to prevent data breaches and compliance violations.</p>
+
+<h2>Advanced Security Analysis</h2>
 <ul>
-  <li>Security vector analysis:
+  <li>
+    <strong>Configurable Security Vectors</strong>
+    <p>Flexible security vector management through admin UI with customizable risk scoring from 0 (no risk) to 100 (high risk).</p>
+  </li>
+  <li>
+    <strong>Pre-Configured Risk Detection</strong>
+    <p>Built-in security vectors for common vulnerability patterns:</p>
     <ul>
-      <li>Configurable security vectors through admin UI</li>
-      <li>Risk scoring from 0 (no risk) to 100 (high risk)</li>
-      <li>Add/delete custom security vectors</li>
+      <li><strong>PII Disclosure</strong> - Identifies potential exposure of personally identifiable information</li>
+      <li><strong>Credentials Disclosure</strong> - Detects API keys, passwords, and authentication data exposure</li>
     </ul>
   </li>
-  <li>Pre-configured security vectors:
-    <ul>
-      <li>PII Disclosure - Identifies potential disclosure of personally identifiable information</li>
-      <li>Credentials Disclosure - Detects exposure of API keys, passwords, or authentication data</li>
-    </ul>
+  <li>
+    <strong>Custom Security Vectors</strong>
+    <p>Add and delete custom security vectors tailored to your organization's specific security policies and compliance requirements.</p>
   </li>
-  <li>Batch security analysis for existing content</li>
-  <li>Per-vector batch processing for focused analysis</li>
-  <li>Visual risk indicators for quick assessment</li>
-  <li>Integration with the Analyze framework</li>
-  <li>Views integration for security reporting and dashboards</li>
+  <li>
+    <strong>Intelligent Batch Processing</strong>
+    <p>Comprehensive batch analysis capabilities with per-vector processing for focused security audits of existing content.</p>
+  </li>
+  <li>
+    <strong>Visual Risk Assessment</strong>
+    <p>Intuitive risk indicators and reporting dashboards provide quick security status overview with detailed findings.</p>
+  </li>
 </ul>
 
-<h3 id="module-project--post-installation">Post-installation</h3>
+<h2>Security Setup Guide</h2>
 <ol>
   <li>Configure AI provider settings at /admin/config/ai/providers</li>
   <li>Manage security vectors at /admin/config/analyze/content-security-audit</li>
