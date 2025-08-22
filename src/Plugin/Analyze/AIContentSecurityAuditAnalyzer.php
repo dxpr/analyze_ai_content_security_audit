@@ -27,7 +27,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
-
   /**
    * The AI provider manager.
    *
@@ -121,20 +120,20 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('analyze.helper'),
-      $container->get('current_user'),
-      $container->get('ai.provider'),
-      $container->get('config.factory'),
-      $container->get('entity_type.manager'),
-      $container->get('renderer'),
-      $container->get('language_manager'),
-      $container->get('messenger'),
-      $container->get('ai.prompt_json_decode'),
-      $container->get('analyze_ai_content_security_audit.storage'),
-    );
+          $configuration,
+          $plugin_id,
+          $plugin_definition,
+          $container->get('analyze.helper'),
+          $container->get('current_user'),
+          $container->get('ai.provider'),
+          $container->get('config.factory'),
+          $container->get('entity_type.manager'),
+          $container->get('renderer'),
+          $container->get('language_manager'),
+          $container->get('messenger'),
+          $container->get('ai.prompt_json_decode'),
+          $container->get('analyze_ai_content_security_audit.storage'),
+      );
   }
 
   /**
@@ -194,7 +193,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
     // Sort enabled vectors by weight.
     uasort($enabled, function ($a, $b) {
-      return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
+        return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
     });
 
     return $enabled;
@@ -221,10 +220,10 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
       '#theme' => 'analyze_table',
       '#table_title' => 'Content Security Audit',
       '#rows' => [
-        [
-          'label' => 'Status',
-          'data' => $message,
-        ],
+      [
+        'label' => 'Status',
+        'data' => $message,
+      ],
       ],
     ];
   }
@@ -371,8 +370,8 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
     // Convert to string and strip HTML for security analysis.
     $content = is_object($rendered) && method_exists($rendered, '__toString')
-      ? $rendered->__toString()
-      : (string) $rendered;
+        ? $rendered->__toString()
+        : (string) $rendered;
 
     // Clean up the content for security analysis.
     $content = strip_tags($content);
@@ -419,15 +418,15 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
       foreach ($enabled_vectors as $id => $vector) {
         $criteria = $this->getVectorCriteria($id);
         $vector_descriptions[] = sprintf(
-          "- %s: %s (Score 0-100, where 0=no risk, 100=high risk)",
-          $vector['label'],
-          $criteria
-        );
+              "- %s: %s (Score 0-100, where 0=no risk, 100=high risk)",
+              $vector['label'],
+              $criteria
+          );
       }
 
       // Build dynamic JSON structure based on enabled vectors.
       $json_keys = array_map(function ($id, $vector) {
-        return '"' . $id . '": number';
+          return '"' . $id . '": number';
       }, array_keys($enabled_vectors), $enabled_vectors);
 
       $json_template = '{' . implode(', ', $json_keys) . '}';
@@ -476,7 +475,6 @@ EOT;
       }
 
       return $scores;
-
     }
     catch (\Exception $e) {
       return [];

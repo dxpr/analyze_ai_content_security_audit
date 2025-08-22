@@ -21,9 +21,9 @@ fi
 cd drupal
 mkdir -p web/modules/contrib/
 
-# Symlink analyze_ai_content_security_audit if not already linked
-if [ ! -L "web/modules/contrib/analyze_ai_content_security_audit" ]; then
-  ln -s /src web/modules/contrib/analyze_ai_content_security_audit
+# Symlink analyze_ai_brand_voice if not already linked
+if [ ! -L "web/modules/contrib/analyze_ai_brand_voice" ]; then
+  ln -s /src web/modules/contrib/analyze_ai_brand_voice
 fi
 
 # Install the statistic modules if D11 (removed from core).
@@ -35,4 +35,4 @@ fi
 composer require $DRUPAL_CHECK_TOOL --dev
 
 # Run drupal-check
-./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_content_security_audit
+./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_brand_voice 

@@ -12,14 +12,14 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * Service for batch processing security vector analysis.
  */
 final class SecurityVectorBatchService {
-
   use StringTranslationTrait;
   use DependencySerializationTrait;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly SecurityVectorStorageService $storage,
-  ) {}
+  ) {
+  }
 
   /**
    * Gets entities that need security analysis.

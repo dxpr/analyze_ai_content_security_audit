@@ -1,6 +1,7 @@
 # AI Content Security Audit
 
-AI-powered content security risk analysis identifying potential PII disclosure, credential exposure, and sensitive information leaks before publication.
+AI-powered content security risk analysis identifying potential PII disclosure,
+credential exposure, and sensitive information leaks before publication.
 
 ## Features
 
@@ -29,7 +30,8 @@ drush en analyze_ai_content_security_audit
 1. Configure AI provider at `/admin/config/ai/providers`
 2. Manage security vectors at `/admin/config/analyze/content-security-audit`
 3. Enable per content type at `/admin/config/content/analyze-settings`
-4. Configure permissions at `/admin/people/permissions#module-analyze_ai_content_security_audit`
+4. Configure permissions at
+   `/admin/people/permissions#module-analyze_ai_content_security_audit`
 
 ### Security Vector Management
 - **Add vectors**: Click "Add vector" with risk scoring and detection criteria
@@ -45,7 +47,8 @@ drush en analyze_ai_content_security_audit
 ## Default Security Vectors
 
 ### PII Disclosure
-Identifies potential exposure of personally identifiable information including:
+Identifies potential exposure of personally identifiable information
+including:
 - Names, addresses, phone numbers
 - Social security numbers, ID numbers
 - Email addresses in sensitive contexts
@@ -77,5 +80,6 @@ Process content during low-traffic periods:
 
 - **Privacy Regulations**: GDPR, CCPA, HIPAA compliance
 - **Data Breach Prevention**: Proactive sensitive information detection
-- **Publication Workflows**: Security risk assessment before content goes live
+- **Publication Workflows**: Security risk assessment before content goes
+  live
 - **Audit Trails**: Historical tracking of security risk remediation

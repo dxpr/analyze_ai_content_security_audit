@@ -621,7 +621,14 @@ display:
       display_extenders: {  }
       path: admin/reports/content-security-audit-results
       menu:
-        type: none
+        type: normal
+        title: 'AI Content Security Audit'
+        description: 'View AI content security audit analysis results and insights.'
+        weight: -1
+        expanded: false
+        menu_name: admin
+        parent: system.admin_reports
+        context: '0'
     cache_metadata:
       max-age: -1
       contexts:

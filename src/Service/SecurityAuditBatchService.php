@@ -12,14 +12,14 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * Service for batch processing security audit analysis.
  */
 final class SecurityAuditBatchService {
-
   use StringTranslationTrait;
   use DependencySerializationTrait;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly SecurityVectorStorageService $storage,
-  ) {}
+  ) {
+  }
 
   /**
    * Gets entities that need security audit analysis.
@@ -129,7 +129,6 @@ final class SecurityAuditBatchService {
             '@message' => $e->getMessage(),
           ])->render();
         }
-
       }
     }
     catch (\Exception $e) {

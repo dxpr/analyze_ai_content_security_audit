@@ -17,7 +17,6 @@ use Drupal\Core\Render\RendererInterface;
  * Service for storing and retrieving security vector analysis results.
  */
 final class SecurityVectorStorageService {
-
   use DependencySerializationTrait;
 
   public function __construct(
@@ -26,7 +25,8 @@ final class SecurityVectorStorageService {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
     private readonly LanguageManagerInterface $languageManager,
-  ) {}
+  ) {
+  }
 
   /**
    * Gets the cached security scores for an entity.
@@ -285,8 +285,8 @@ final class SecurityVectorStorageService {
 
     // Convert to string and clean up.
     $content = is_object($rendered) && method_exists($rendered, '__toString')
-      ? $rendered->__toString()
-      : (string) $rendered;
+        ? $rendered->__toString()
+        : (string) $rendered;
 
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);

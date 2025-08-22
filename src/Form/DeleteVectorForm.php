@@ -12,7 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides a form for deleting a security vector.
  */
 class DeleteVectorForm extends ConfirmFormBase {
-
   /**
    * The config factory.
    *
@@ -42,8 +41,8 @@ class DeleteVectorForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('config.factory')
-    );
+          $container->get('config.factory')
+      );
   }
 
   /**

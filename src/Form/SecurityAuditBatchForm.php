@@ -17,15 +17,16 @@ final class SecurityAuditBatchForm extends FormBase {
 
   public function __construct(
     private readonly SecurityAuditBatchService $batchService,
-  ) {}
+  ) {
+  }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('analyze_ai_content_security_audit.batch_service'),
-    );
+          $container->get('analyze_ai_content_security_audit.batch_service'),
+      );
   }
 
   /**
@@ -99,10 +100,10 @@ final class SecurityAuditBatchForm extends FormBase {
     $selected_types = array_filter($values['entity_types']);
 
     $entities = $this->batchService->getEntitiesForAnalysis(
-      $selected_types,
-      (bool) $values['force_refresh'],
-      (int) $values['limit']
-    );
+          $selected_types,
+          (bool) $values['force_refresh'],
+          (int) $values['limit']
+      );
 
     if (empty($entities)) {
       $this->messenger()->addWarning($this->t('No entities found for analysis.'));
@@ -143,11 +144,11 @@ final class SecurityAuditBatchForm extends FormBase {
     if ($success) {
       $processed = $results['processed'] ?? 0;
       \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
-        $processed,
-        'Successfully analyzed @count entity for security risks.',
-        'Successfully analyzed @count entities for security risks.',
-        ['@count' => $processed]
-      ));
+            $processed,
+            'Successfully analyzed @count entity for security risks.',
+            'Successfully analyzed @count entities for security risks.',
+            ['@count' => $processed]
+        ));
 
       if (!empty($results['errors'])) {
         foreach ($results['errors'] as $error) {

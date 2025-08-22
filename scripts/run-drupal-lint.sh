@@ -7,7 +7,7 @@ echo "---- Checking with PHPCompatibility PHP 8.3 and up ----"
 phpcs --standard=PHPCompatibility \
   --runtime-set testVersion 8.3- \
   --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml \
-  --ignore=node_modules,analyze/vendor,.github,vendor \
+  --ignore=node_modules,analyze_ai_content_security_audit/vendor,.github,vendor \
   -v \
   .
 status=$?
@@ -18,7 +18,7 @@ fi
 echo "---- Checking with Drupal standard... ----"
 phpcs --standard=Drupal \
   --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml \
-  --ignore=node_modules,analyze/vendor,.github,vendor \
+  --ignore=node_modules,analyze_ai_content_security_audit/vendor,.github,vendor \
   -v \
   .
 status=$?
@@ -29,7 +29,7 @@ fi
 echo "---- Checking with DrupalPractice standard... ----"
 phpcs --standard=DrupalPractice \
   --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml \
-  --ignore=node_modules,analyze/vendor,.github,vendor \
+  --ignore=node_modules,analyze_ai_content_security_audit/vendor,.github,vendor \
   -v \
   .
 
@@ -39,4 +39,4 @@ if [ $status -ne 0 ]; then
 fi
 
 # Exit with failure if any of the checks failed
-exit $EXIT_CODE
+exit $EXIT_CODE 

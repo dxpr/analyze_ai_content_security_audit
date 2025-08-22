@@ -2,8 +2,8 @@
 set -e
 
 if [ -z "$TARGET_DRUPAL_CORE_VERSION" ]; then
-  # default to target Drupal 8, you can override this by setting the secrets value on your github repo
-  TARGET_DRUPAL_CORE_VERSION=10
+  # default to target Drupal 11, you can override this by setting the secrets value on your github repo
+  TARGET_DRUPAL_CORE_VERSION=11
 fi
 
 echo "php --version"
@@ -28,6 +28,6 @@ composer global show -P
 phpcs -i
 
 phpcs --config-set colors 1
-phpcs --config-set drupal_core_version $TARGET_DRUPAL_CORE_VERSION
+phpcs --config-set drupal_core_version 11$TARGET_DRUPAL_CORE_VERSION
 
-phpcs --config-show
+phpcs --config-show 

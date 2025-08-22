@@ -80,17 +80,17 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
         $this->t('Operations'),
       ],
       '#tabledrag' => [
-        [
-          'action' => 'order',
-          'relationship' => 'sibling',
-          'group' => 'vector-weight',
-        ],
+      [
+        'action' => 'order',
+        'relationship' => 'sibling',
+        'group' => 'vector-weight',
+      ],
       ],
     ];
 
     // Sort vectors by weight.
     uasort($vectors, function ($a, $b) {
-      return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
+        return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
     });
 
     // Add existing vectors to the table.

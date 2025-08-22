@@ -2,7 +2,8 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the analyze_ai_content_security_audit module.
+ * Install, update and uninstall functions for the
+ * analyze_ai_content_security_audit module.
  */
 
 /**
@@ -104,7 +105,7 @@ function analyze_ai_content_security_audit_install() {
 
   // Initialize default security vectors.
   $storage = \Drupal::service('analyze_ai_content_security_audit.storage');
-  
+
   $default_vectors = [
     'pii_disclosure' => [
       'label' => 'PII Disclosure',
@@ -130,7 +131,7 @@ function analyze_ai_content_security_audit_uninstall() {
   // Clean up any remaining data if tables exist.
   $database = \Drupal::database();
   $schema = $database->schema();
-  
+
   if ($schema->tableExists('analyze_ai_content_security_audit_results')) {
     $database->delete('analyze_ai_content_security_audit_results')->execute();
   }

@@ -12,7 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Form for adding a new security vector.
  */
 class AddVectorForm extends FormBase {
-
   /**
    * The config factory.
    *
@@ -35,8 +34,8 @@ class AddVectorForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('config.factory')
-    );
+          $container->get('config.factory')
+      );
   }
 
   /**
@@ -153,7 +152,7 @@ class AddVectorForm extends FormBase {
     ];
 
     $config->set('vectors', $vectors)->save();
-    $this->messenger()->addStatus($this->t('Added new security vector %label.', ['%label' => $values['label']]));     
+    $this->messenger()->addStatus($this->t('Added new security vector %label.', ['%label' => $values['label']]));
     $form_state->setRedirectUrl(Url::fromRoute('analyze_ai_content_security_audit.settings'));
   }
 
