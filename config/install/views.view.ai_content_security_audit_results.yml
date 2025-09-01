@@ -2,13 +2,15 @@ uuid: 87654321-4321-4321-4321-456789abcdef
 langcode: en
 status: true
 dependencies:
+  config:
+    - system.menu.admin
   module:
     - analyze_ai_content_security_audit
     - node
     - user
     - views_color_scales
 _core:
-  default_config_hash: 17wEs9pWeZkDSyCIHfCSVYFccaeTRg6ygakJy-zkdR0
+  default_config_hash: UBbH-uF8rd-6hRVGECmJbR8IH5_Hw4-u-PXlyEzP-4M
 id: ai_content_security_audit_results
 label: 'AI Content Security Audit Analysis'
 module: views
@@ -403,6 +405,51 @@ display:
           granularity: second
       arguments: {  }
       filters:
+        vector_id_1:
+          id: vector_id_1
+          table: analyze_ai_content_security_audit_results
+          field: vector_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: string
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: vector_id_1_op
+            label: 'Security Vector'
+            description: ''
+            use_operator: false
+            operator: vector_id_1_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: vector_id_1
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              content_editor: '0'
+              marketer: '0'
+              site_bui: '0'
+              content_administrator: '0'
+              administrator: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         vector_id:
           id: vector_id
           table: analyze_ai_content_security_audit_results
@@ -525,6 +572,10 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
       style:
         type: table
         options:
