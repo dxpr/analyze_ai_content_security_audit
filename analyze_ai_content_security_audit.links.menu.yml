@@ -7,7 +7,7 @@ analyze_ai_content_security_audit.settings:
 
 analyze_ai_content_security_audit.reports:
   title: 'AI Content Security Audit Results'
-  route_name: view.content_security_audit_results.page_1
+  route_name: view.ai_content_security_audit_results.page_1
   description: 'View AI content security audit analysis results and insights.'
   parent: system.admin_reports
   weight: -1
