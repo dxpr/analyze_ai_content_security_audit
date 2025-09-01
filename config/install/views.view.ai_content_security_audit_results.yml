@@ -500,7 +500,7 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: Content
+            label: Search
             description: ''
             use_operator: false
             operator: title_op
