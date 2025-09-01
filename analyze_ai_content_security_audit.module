@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Analyze AI Content Security Audit module for security-focused content analysis.
+ */
+
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function analyze_ai_content_security_audit_views_pre_render(ViewExecutable $view) {
+  // Add settings link to the content security audit view header.
+  if ($view->id() === 'ai_content_security_audit_results' && $view->current_display === 'page_1') {
+    $options = [
+      'area_text_custom' => [
+        'id' => 'area_text_custom',
+        'table' => 'views',
+        'field' => 'area_text_custom',
+        'plugin_id' => 'text_custom',
+        'empty' => FALSE,
+        'content' => '',
+      ],
+    ];
+
+    // Build the settings link if user has permission.
+    $current_user = \Drupal::currentUser();
+    if ($current_user->hasPermission('administer analyze settings')) {
+      $settings_url = Url::fromRoute('analyze_ai_content_security_audit.settings');
+      if ($settings_url->access()) {
+        $link = Link::fromTextAndUrl(t('Configure settings'), $settings_url);
+        $link = $link->toRenderable();
+        $link['#attributes']['class'][] = 'button';
+        $link['#attributes']['class'][] = 'button--small';
+
+        // Render the link and add it to the header.
+        $renderer = \Drupal::service('renderer');
+        $rendered_link = $renderer->renderRoot($link);
+        $options['area_text_custom']['content'] = '<div class="form-actions">' . $rendered_link . '</div>';
+
+        // Set the header option.
+        $view->display_handler->setOption('header', $options);
+      }
+    }
+  }
+}

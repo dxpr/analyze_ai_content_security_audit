@@ -66,6 +66,27 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    // Add link to reports page if user has permission.
+    $current_user = \Drupal::currentUser();
+    if ($current_user->hasPermission('access site reports')) {
+      $reports_url = Url::fromRoute('view.ai_content_security_audit_results.page_1');
+      if ($reports_url->access()) {
+        $form['actions_top'] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['form-actions']],
+          '#weight' => -10,
+          'report_link' => [
+            '#type' => 'link',
+            '#title' => $this->t('View reports'),
+            '#url' => $reports_url,
+            '#attributes' => [
+              'class' => ['button', 'button--small', 'button--primary'],
+            ],
+          ],
+        ];
+      }
+    }
+
     $form['table'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['security-vector-table-container']],
