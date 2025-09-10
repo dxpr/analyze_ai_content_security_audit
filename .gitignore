@@ -25,3 +25,7 @@ yarn-error.log
 *.tmp
 *.swp
 *~
+
+# PHPStan cache and temporary files
+var/
+phpstan-*.neon
