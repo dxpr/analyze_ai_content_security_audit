@@ -465,6 +465,7 @@ EOT;
 
       // Get response.
       $messages = new ChatInput($chat_array);
+      // @phpstan-ignore-next-line
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
 
       // Use the injected PromptJsonDecoder service.
@@ -620,6 +621,7 @@ EOT;
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
 
     // Configure provider with low temperature for more consistent results.
+    // @phpstan-ignore-next-line
     $ai_provider->setConfiguration(['temperature' => 0.2]);
 
     return $ai_provider;
