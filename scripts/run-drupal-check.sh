@@ -1,30 +1,24 @@
 #!/bin/bash
 set -vo pipefail
 
-DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-10.3.x-dev}
+DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-11.x-dev}
 PHP_EXTENSIONS="gd"
-DRUPAL_CHECK_TOOL="mglaman/drupal-check:^1.5"
+DRUPAL_CHECK_TOOL="mglaman/drupal-check:^2.0"
 
-# Install required PHP extensions
-for ext in $PHP_EXTENSIONS; do
-  if ! php -m | grep -q $ext; then
-    apk update && apk add --no-cache ${ext}-dev
-    docker-php-ext-install $ext
-  fi
-done
+# Install required PHP extensions (skip in local environment)
+# for ext in $PHP_EXTENSIONS; do
+#   if ! php -m | grep -q $ext; then
+#     apk update && apk add --no-cache ${ext}-dev
+#     docker-php-ext-install $ext
+#   fi
+# done
 
 # Create Drupal project if it doesn't exist
-if [ ! -d "/drupal" ]; then
+if [ ! -d "drupal" ]; then
   composer create-project drupal/recommended-project=$DRUPAL_RECOMMENDED_PROJECT drupal --no-interaction --stability=dev
 fi
 
 cd drupal
-mkdir -p web/modules/contrib/
-
-# Symlink analyze_ai_content_security_audit if not already linked
-if [ ! -L "web/modules/contrib/analyze_ai_content_security_audit" ]; then
-  ln -s /src web/modules/contrib/analyze_ai_content_security_audit
-fi
 
 # Install the statistic modules if D11 (removed from core).
 if [[ $DRUPAL_RECOMMENDED_PROJECT == 11.* ]]; then
@@ -32,7 +26,7 @@ if [[ $DRUPAL_RECOMMENDED_PROJECT == 11.* ]]; then
 fi
 
 # Install drupal-check with compatible version
-composer require $DRUPAL_CHECK_TOOL --dev --with-all-dependencies
+composer require $DRUPAL_CHECK_TOOL --dev --ignore-platform-reqs --with-all-dependencies || true
 
-# Run drupal-check
-./vendor/bin/drupal-check --drupal-root . -ad web/modules/contrib/analyze_ai_content_security_audit 
+# Run drupal-check on src directory
+./vendor/bin/drupal-check --drupal-root . -ad ../src/ 

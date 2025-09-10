@@ -30,14 +30,14 @@ final class SecurityAuditBatchService {
   /**
    * Gets entities that need security audit analysis.
    *
-   * @param array $entity_bundles
+   * @param array<string> $entity_bundles
    *   Array of entity_type:bundle strings.
    * @param bool $force_refresh
    *   Whether to include entities with existing analysis.
    * @param int $limit
    *   Maximum number of entities to return.
    *
-   * @return array
+   * @return array<array<string, mixed>>
    *   Array of entity info arrays.
    */
   public function getEntitiesForAnalysis(array $entity_bundles, bool $force_refresh = FALSE, int $limit = 0): array {
@@ -89,13 +89,13 @@ final class SecurityAuditBatchService {
   /**
    * Processes a batch of entities for security audit analysis.
    *
-   * @param array $entities
+   * @param array<array<string, mixed>> $entities
    *   Array of entity info.
    * @param bool $force_refresh
    *   Whether to force fresh analysis.
    * @param int $total_entities
    *   Total number of entities being processed across all batches.
-   * @param array $context
+   * @param array<string, mixed> $context
    *   Batch context.
    */
   public function processBatch(array $entities, bool $force_refresh, int $total_entities, array &$context): void {
@@ -160,7 +160,7 @@ final class SecurityAuditBatchService {
   /**
    * Gets available entity bundles that have security audit analysis enabled.
    *
-   * @return array
+   * @return array<string, string>
    *   Array of entity_type:bundle => label pairs.
    */
   public function getAvailableEntityBundles(): array {
@@ -189,7 +189,7 @@ final class SecurityAuditBatchService {
    * @param string $bundle
    *   The bundle.
    *
-   * @return array
+   * @return array<int|string>
    *   Array of entity IDs that have valid cached results.
    */
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {

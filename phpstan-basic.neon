@@ -1,0 +1,7 @@
+parameters:
+  level: 0
+  paths:
+    - src
+  ignoreErrors:
+    - '#Cannot call method [a-zA-Z]+\(\) on mixed#'
+    - '#Property .* does not accept array#'

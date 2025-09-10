@@ -11,7 +11,6 @@ use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageServic
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -91,8 +90,6 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
    *   Entity type manager.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
-   *   The language manager service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
    * @param \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface $promptJsonDecoder
@@ -112,7 +109,6 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     ?ConfigFactoryInterface $config_factory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
-    protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
     SecurityVectorStorageService $storage,
@@ -131,7 +127,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
-    return new static(
+    return new self(
           $configuration,
           $plugin_id,
           $plugin_definition,
@@ -141,7 +137,6 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
           $container->get('config.factory'),
           $container->get('entity_type.manager'),
           $container->get('renderer'),
-          $container->get('language_manager'),
           $container->get('messenger'),
           $container->get('ai.prompt_json_decode'),
           $container->get('analyze_ai_content_security_audit.storage'),
@@ -372,8 +367,8 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
    *   A HTML string of rendered content.
    */
   private function getHtml(EntityInterface $entity): string {
-    // Get the current active langcode from the site.
-    $langcode = $this->languageManager->getCurrentLanguage()->getId();
+    // Use the entity's own language.
+    $langcode = $entity->language()->getId();
 
     // Get the rendered entity view in default mode.
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
@@ -621,7 +616,6 @@ EOT;
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
 
     // Configure provider with low temperature for more consistent results.
-    // @phpstan-ignore-next-line
     $ai_provider->setConfiguration(['temperature' => 0.2]);
 
     return $ai_provider;

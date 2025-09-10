@@ -33,7 +33,7 @@ class AddVectorForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    return new self(
           $container->get('config.factory')
       );
   }
@@ -62,6 +62,14 @@ class AddVectorForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array<string, mixed>
+   *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $form */
@@ -131,6 +139,11 @@ class AddVectorForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */

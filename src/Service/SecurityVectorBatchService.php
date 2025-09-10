@@ -32,14 +32,14 @@ final class SecurityVectorBatchService {
   /**
    * Gets entities that need security analysis.
    *
-   * @param array $entity_bundles
+   * @param array<string> $entity_bundles
    *   Array of entity_type:bundle strings.
    * @param bool $force_refresh
    *   Whether to include entities with existing analysis.
    * @param int $limit
    *   Maximum number of entities to return.
    *
-   * @return array
+   * @return array<array<string, mixed>>
    *   Array of entity info arrays.
    */
   public function getEntitiesForAnalysis(array $entity_bundles, bool $force_refresh = FALSE, int $limit = 0): array {
@@ -91,11 +91,11 @@ final class SecurityVectorBatchService {
   /**
    * Processes a batch of entities for security analysis.
    *
-   * @param array $entities
+   * @param array<array<string, mixed>> $entities
    *   Array of entity info.
    * @param bool $force_refresh
    *   Whether to force fresh analysis.
-   * @param array $context
+   * @param array<string, mixed> $context
    *   Batch context.
    */
   public function processBatch(array $entities, bool $force_refresh, array &$context): void {
@@ -162,7 +162,7 @@ final class SecurityVectorBatchService {
    * @param string $bundle
    *   The bundle.
    *
-   * @return array
+   * @return array<int|string>
    *   Array of entity IDs that have been analyzed recently.
    */
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
@@ -183,7 +183,7 @@ final class SecurityVectorBatchService {
   /**
    * Gets the available entity bundles that have security analysis enabled.
    *
-   * @return array
+   * @return array<string, string>
    *   Array of entity_type:bundle => label pairs.
    */
   public function getAvailableEntityBundles(): array {

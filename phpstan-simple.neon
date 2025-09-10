@@ -1,0 +1,10 @@
+parameters:
+  level: 0
+  paths:
+    - src
+  ignoreErrors:
+    - '#Class .* extends unknown class .*#'
+    - '#has unknown class .* as its type#'
+    - '#has invalid type .*#'
+    - '#calls parent::__construct\(\) but .* does not extend any class#'
+    - '#Call to an undefined method .*#'

@@ -1,7 +1,7 @@
 services:
   analyze_ai_content_security_audit.storage:
     class: Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService
-    arguments: ['@database', '@config.factory', '@entity_type.manager', '@renderer', '@language_manager', '@datetime.time']
+    arguments: ['@database', '@config.factory', '@entity_type.manager', '@renderer', '@datetime.time']
 
   analyze_ai_content_security_audit.batch_service:
     class: Drupal\analyze_ai_content_security_audit\Service\SecurityAuditBatchService

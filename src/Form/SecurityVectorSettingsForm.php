@@ -5,11 +5,51 @@ namespace Drupal\analyze_ai_content_security_audit\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure security vector analysis settings.
  */
 class SecurityVectorSettingsForm extends ConfigFormBase {
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The storage service.
+   *
+   * @var \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService
+   */
+  protected $storage;
+
+  /**
+   * Constructs a SecurityVectorSettingsForm object.
+   *
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
+   * @param \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService $storage
+   *   The storage service.
+   */
+  public function __construct(AccountProxyInterface $current_user, SecurityVectorStorageService $storage) {
+    $this->currentUser = $current_user;
+    $this->storage = $storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new self(
+      $container->get('current_user'),
+      $container->get('analyze_ai_content_security_audit.storage')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -49,6 +89,14 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array<string, mixed>
+   *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $form */
@@ -67,7 +115,7 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
     ];
 
     // Add link to reports page if user has permission.
-    $current_user = \Drupal::currentUser();
+    $current_user = $this->currentUser;
     if ($current_user->hasPermission('access site reports')) {
       $reports_url = Url::fromRoute('view.ai_content_security_audit_results.page_1');
       if ($reports_url->access()) {
@@ -179,6 +227,11 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
@@ -197,8 +250,7 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
 
     // Invalidate all cached security analysis results since configuration
     // changed.
-    \Drupal::service('analyze_ai_content_security_audit.storage')
-      ->invalidateConfigCache();
+    $this->storage->invalidateConfigCache();
 
     parent::submitForm($form, $form_state);
   }

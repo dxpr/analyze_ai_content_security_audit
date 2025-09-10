@@ -24,7 +24,7 @@ final class SecurityVectorBatchForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    return new self(
           $container->get('analyze_ai_content_security_audit.batch_service'),
       );
   }
@@ -38,6 +38,14 @@ final class SecurityVectorBatchForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array<string, mixed>
+   *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
@@ -93,6 +101,11 @@ final class SecurityVectorBatchForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->getValues();

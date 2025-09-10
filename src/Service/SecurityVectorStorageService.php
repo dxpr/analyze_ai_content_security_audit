@@ -11,7 +11,6 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Component\Datetime\TimeInterface;
 
@@ -26,7 +25,6 @@ final class SecurityVectorStorageService {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
-    private readonly LanguageManagerInterface $languageManager,
     private readonly TimeInterface $time,
   ) {
   }
@@ -37,7 +35,7 @@ final class SecurityVectorStorageService {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to get the scores for.
    *
-   * @return array
+   * @return array<string, int>
    *   Array of vector_id => score pairs.
    */
   public function getScores(EntityInterface $entity): array {
@@ -62,7 +60,7 @@ final class SecurityVectorStorageService {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity the scores are for.
-   * @param array $scores
+   * @param array<string, int> $scores
    *   Array of vector_id => score pairs.
    */
   public function saveScores(EntityInterface $entity, array $scores): void {
@@ -132,7 +130,7 @@ final class SecurityVectorStorageService {
   /**
    * Gets statistics about stored analysis results.
    *
-   * @return array
+   * @return array<string, int>
    *   Array with count statistics.
    */
   public function getStatistics(): array {
@@ -157,7 +155,7 @@ final class SecurityVectorStorageService {
   /**
    * Gets average scores by vector type.
    *
-   * @return array
+   * @return array<string, float>
    *   Array of vector_id => average_score pairs.
    */
   public function getAverageScores(): array {
@@ -175,7 +173,7 @@ final class SecurityVectorStorageService {
   /**
    * Gets all configured security vectors.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Array of vector configurations keyed by vector_id.
    */
   public function getVectors(): array {
@@ -189,7 +187,7 @@ final class SecurityVectorStorageService {
    * @param string $vector_id
    *   The vector ID.
    *
-   * @return array|null
+   * @return array<string, mixed>|null
    *   The vector configuration or NULL if not found.
    */
   public function getVector(string $vector_id): ?array {
@@ -202,7 +200,7 @@ final class SecurityVectorStorageService {
    *
    * @param string $vector_id
    *   The vector ID.
-   * @param array $vector_data
+   * @param array<string, mixed> $vector_data
    *   The vector configuration data.
    */
   public function saveVector(string $vector_id, array $vector_data): void {
