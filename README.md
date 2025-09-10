@@ -1,4 +1,4 @@
-# AI Content Security Audit
+# AI Content Security Audit :)
 
 AI-powered content security risk analysis identifying potential PII disclosure,
 credential exposure, and sensitive information leaks before publication.
