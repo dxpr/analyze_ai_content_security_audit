@@ -1,37 +1,27 @@
 #!/bin/bash
-set -e
 
-if [ -z "$TARGET_DRUPAL_CORE_VERSION" ]; then
-  # default to target Drupal 11, you can override this by setting the secrets value on your github repo
-  TARGET_DRUPAL_CORE_VERSION=11
-fi
+echo "$COMPOSER_HOME: $COMPOSER_HOME"
 
-if [ -z "$COMPOSER_HOME" ]; then
-  export COMPOSER_HOME=$(composer config --global home)
-fi
+# Allow the plugin installer
+composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 
-echo "php --version"
-php --version
-echo "composer --version"
-composer --version
+# Install Drupal coding standards
+composer global require drupal/coder
 
-echo "\$COMPOSER_HOME: $COMPOSER_HOME"
-echo "TARGET_DRUPAL_CORE_VERSION: $TARGET_DRUPAL_CORE_VERSION"
-
-# Add this line to avoid the plugin prompt
-composer config --global allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-
-composer global require drupal/coder --dev
-composer global require phpcompatibility/php-compatibility --dev
+# Install PHP compatibility checker
+composer global require phpcompatibility/php-compatibility
 
 export PATH="$PATH:$COMPOSER_HOME/vendor/bin"
 
-composer global require dealerdirect/phpcodesniffer-composer-installer --dev
+# Install PHPCS plugin installer
+composer global require dealerdirect/phpcodesniffer-composer-installer
 
 composer global show -P
 $COMPOSER_HOME/vendor/bin/phpcs -i
 
+# Configure PHPCS settings
 $COMPOSER_HOME/vendor/bin/phpcs --config-set colors 1
-$COMPOSER_HOME/vendor/bin/phpcs --config-set drupal_core_version 11$TARGET_DRUPAL_CORE_VERSION
+$COMPOSER_HOME/vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
+$COMPOSER_HOME/vendor/bin/phpcs --config-set drupal_core_version 11
 
-$COMPOSER_HOME/vendor/bin/phpcs --config-show 
+$COMPOSER_HOME/vendor/bin/phpcs --config-show

@@ -1,32 +1,41 @@
 #!/bin/bash
+
 set -vo pipefail
 
-DRUPAL_RECOMMENDED_PROJECT=${DRUPAL_RECOMMENDED_PROJECT:-11.x-dev}
-PHP_EXTENSIONS="gd"
-DRUPAL_CHECK_TOOL="mglaman/drupal-check:^2.0"
+# Install required libs for Drupal
+GD_ENABLED=$(php -i | grep 'GD Support' | awk '{ print $4 }')
 
-# Install required PHP extensions (skip in local environment)
-# for ext in $PHP_EXTENSIONS; do
-#   if ! php -m | grep -q $ext; then
-#     apk update && apk add --no-cache ${ext}-dev
-#     docker-php-ext-install $ext
-#   fi
-# done
-
-# Create Drupal project if it doesn't exist
-if [ ! -d "drupal" ]; then
-  composer create-project drupal/recommended-project=$DRUPAL_RECOMMENDED_PROJECT drupal --no-interaction --stability=dev
+if [ "$GD_ENABLED" != 'enabled' ]; then
+  apk update && \
+  apk add libpng libpng-dev libjpeg-turbo-dev libwebp-dev zlib-dev libxpm-dev gd tree rsync && docker-php-ext-install gd
 fi
 
-cd drupal
+# Create project in a temporary directory inside the container
+INSTALL_DIR="/drupal_install_tmp"
+composer create-project drupal/recommended-project:11.x-dev "$INSTALL_DIR" --no-interaction --stability=dev
 
-# Install the statistic modules if D11 (removed from core).
-if [[ $DRUPAL_RECOMMENDED_PROJECT == 11.* ]]; then
-  composer require drupal/statistics
+cd "$INSTALL_DIR"
+
+# Allow specific plugins needed by dependencies before requiring them.
+composer config --no-plugins allow-plugins.tbachert/spi true --no-interaction
+
+# Create phpstan.neon config file
+cat <<EOF > phpstan.neon
+parameters:
+    paths:
+        - web/modules/contrib/analyze_ai_content_security_audit
+    # Set the analysis level (0-9)
+    level: 5
+EOF
+
+mkdir -p web/modules/contrib/
+
+if [ ! -L "web/modules/contrib/analyze_ai_content_security_audit" ]; then
+  ln -s /src web/modules/contrib/analyze_ai_content_security_audit
 fi
 
-# Install drupal-check with compatible version
-composer require $DRUPAL_CHECK_TOOL --dev --ignore-platform-reqs --with-all-dependencies || true
+# Install PHPStan extensions for Drupal 11 and Drush for command analysis
+composer require --dev phpstan/phpstan mglaman/phpstan-drupal phpstan/phpstan-deprecation-rules drush/drush --with-all-dependencies --no-interaction
 
-# Run drupal-check on src directory
-./vendor/bin/drupal-check --drupal-root . -ad ../src/ 
+# Run phpstan
+./vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan.neon
