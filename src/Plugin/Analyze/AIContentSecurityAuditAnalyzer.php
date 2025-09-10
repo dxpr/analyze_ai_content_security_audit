@@ -15,6 +15,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -63,6 +64,13 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
   protected SecurityVectorStorageService $storage;
 
   /**
+   * The class resolver.
+   *
+   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface
+   */
+  protected ClassResolverInterface $classResolver;
+
+  /**
    * Creates the plugin.
    *
    * @param array<string, mixed> $configuration
@@ -91,6 +99,8 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
    *   The prompt JSON decoder service.
    * @param \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService $storage
    *   The security vector storage service.
+   * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $classResolver
+   *   The class resolver.
    */
   public function __construct(
     array $configuration,
@@ -106,6 +116,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
     SecurityVectorStorageService $storage,
+    ClassResolverInterface $classResolver,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
@@ -113,6 +124,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
     $this->storage = $storage;
+    $this->classResolver = $classResolver;
   }
 
   /**
@@ -133,6 +145,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
           $container->get('messenger'),
           $container->get('ai.prompt_json_decode'),
           $container->get('analyze_ai_content_security_audit.storage'),
+          $container->get('class_resolver'),
       );
   }
 
@@ -147,7 +160,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
     if (empty($vectors)) {
       // Load defaults from the settings form.
-      $form = \Drupal::classResolver()
+      $form = $this->classResolver
         ->getInstanceFromDefinition('\Drupal\analyze_ai_content_security_audit\Form\SecurityVectorSettingsForm');
       return $form->getDefaultVectors();
     }
@@ -262,8 +275,6 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     // Show the highest risk score as a gauge.
     if (!empty($scores)) {
       $max_score = max($scores);
-      $vector_id = array_search($max_score, $scores);
-      $vector = $enabled_vectors[$vector_id] ?? reset($enabled_vectors);
 
       // Convert 0 to 100 range to 0 to 1 for gauge.
       $gauge_value = $max_score / 100;
@@ -518,7 +529,7 @@ EOT;
    * {@inheritdoc}
    */
   public function saveSettings(string $entity_type_id, ?string $bundle, array $settings): void {
-    $config = \Drupal::configFactory()->getEditable('analyze.settings');
+    $config = $this->configFactory->getEditable('analyze.settings');
     $current = $config->get('status') ?? [];
 
     // Save enabled state.
@@ -529,7 +540,7 @@ EOT;
 
     // Save vector settings if present.
     if (isset($settings['vectors'])) {
-      $detailed_config = \Drupal::configFactory()->getEditable('analyze.plugin_settings');
+      $detailed_config = $this->configFactory->getEditable('analyze.plugin_settings');
       $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
       $detailed_config->set($key, ['vectors' => $settings['vectors']])->save();
     }

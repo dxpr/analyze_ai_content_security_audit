@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Analyze AI Content Security Audit module for security-focused content analysis.
+ * Security-focused content analysis module.
  */
 
 use Drupal\Core\Link;

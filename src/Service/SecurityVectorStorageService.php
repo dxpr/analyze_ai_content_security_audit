@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Component\Datetime\TimeInterface;
 
 /**
  * Service for storing and retrieving security vector analysis results.
@@ -25,6 +26,7 @@ final class SecurityVectorStorageService {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
     private readonly LanguageManagerInterface $languageManager,
+    private readonly TimeInterface $time,
   ) {
   }
 
@@ -94,7 +96,7 @@ final class SecurityVectorStorageService {
           'score' => $score,
           'content_hash' => $content_hash,
           'config_hash' => $config_hash,
-          'analyzed_timestamp' => \Drupal::time()->getRequestTime(),
+          'analyzed_timestamp' => $this->time->getRequestTime(),
         ]);
       }
 

@@ -7,6 +7,10 @@ namespace Drupal\analyze_ai_content_security_audit\Service;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\analyze\AnalyzePluginManager;
 
 /**
  * Service for batch processing security vector analysis.
@@ -18,6 +22,10 @@ final class SecurityVectorBatchService {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly SecurityVectorStorageService $storage,
+    private readonly AnalyzePluginManager $analyzePluginManager,
+    private readonly Connection $database,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly EntityTypeBundleInfoInterface $bundleInfo,
   ) {
   }
 
@@ -99,7 +107,7 @@ final class SecurityVectorBatchService {
     }
 
     try {
-      $analyzer = \Drupal::service('plugin.manager.analyze')
+      $analyzer = $this->analyzePluginManager
         ->createInstance('analyze_ai_content_security_audit_analyzer');
 
       foreach ($entities as $entity_data) {
@@ -158,13 +166,11 @@ final class SecurityVectorBatchService {
    *   Array of entity IDs that have been analyzed recently.
    */
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
-    $database = \Drupal::database();
-
     // Get entities analyzed in the last 7 days with current config.
     $current_config_hash = $this->storage->generateConfigHash();
     $week_ago = time() - (7 * 24 * 60 * 60);
 
-    $query = $database->select('analyze_ai_content_security_audit_results', 'r')
+    $query = $this->database->select('analyze_ai_content_security_audit_results', 'r')
       ->fields('r', ['entity_id'])
       ->condition('entity_type', $entity_type_id)
       ->condition('config_hash', $current_config_hash)
@@ -181,7 +187,7 @@ final class SecurityVectorBatchService {
    *   Array of entity_type:bundle => label pairs.
    */
   public function getAvailableEntityBundles(): array {
-    $config = \Drupal::config('analyze.settings');
+    $config = $this->configFactory->get('analyze.settings');
     $status = $config->get('status') ?? [];
 
     $options = [];
@@ -190,7 +196,7 @@ final class SecurityVectorBatchService {
         if (isset($analyzers['analyze_ai_content_security_audit_analyzer'])) {
           // Get human-readable names.
           $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
-          $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);
+          $bundle_info = $this->bundleInfo->getBundleInfo($entity_type_id);
 
           $entity_label = $entity_type->getLabel();
           $bundle_label = $bundle_info[$bundle]['label'] ?? $bundle;

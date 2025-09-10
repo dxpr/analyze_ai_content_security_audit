@@ -7,6 +7,9 @@ namespace Drupal\analyze_ai_content_security_audit\Service;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\analyze\AnalyzePluginManager;
 
 /**
  * Service for batch processing security audit analysis.
@@ -18,6 +21,9 @@ final class SecurityAuditBatchService {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly SecurityVectorStorageService $storage,
+    private readonly AnalyzePluginManager $analyzePluginManager,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly EntityTypeBundleInfoInterface $bundleInfo,
   ) {
   }
 
@@ -100,7 +106,7 @@ final class SecurityAuditBatchService {
     }
 
     try {
-      $analyzer = \Drupal::service('plugin.manager.analyze')
+      $analyzer = $this->analyzePluginManager
         ->createInstance('analyze_ai_content_security_audit_analyzer');
 
       foreach ($entities as $entity_data) {
@@ -158,14 +164,14 @@ final class SecurityAuditBatchService {
    *   Array of entity_type:bundle => label pairs.
    */
   public function getAvailableEntityBundles(): array {
-    $config = \Drupal::config('analyze.settings');
+    $config = $this->configFactory->get('analyze.settings');
     $status = $config->get('status') ?? [];
 
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
         if (isset($analyzers['analyze_ai_content_security_audit_analyzer'])) {
-          $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);
+          $bundle_info = $this->bundleInfo->getBundleInfo($entity_type_id);
           $label = $bundle_info[$bundle]['label'] ?? $bundle;
           $options["{$entity_type_id}:{$bundle}"] = "{$entity_type_id} - {$label}";
         }

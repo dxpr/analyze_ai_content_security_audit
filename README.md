@@ -7,7 +7,7 @@ credential exposure, and sensitive information leaks before publication.
 
 - **Configurable Security Vectors**: Flexible risk management through admin UI
 - **Risk Scoring**: Customizable scoring from 0 (no risk) to 100 (high risk)
-- **Pre-configured Detection**: Built-in vectors for PII and credential disclosure
+- **Pre-configured Detection**: Built-in vectors for PII and credentials
 - **Custom Security Vectors**: Add organization-specific security policies
 - **Batch Processing**: Comprehensive analysis of existing content volumes
 - **Visual Risk Assessment**: Intuitive indicators and reporting dashboards
