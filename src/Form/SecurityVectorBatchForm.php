@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_content_security_audit\Form;
 
-use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorBatchService;
+use Drupal\analyze_ai_content_security_audit\Service\SecurityAuditBatchService;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class SecurityVectorBatchForm extends FormBase {
 
   public function __construct(
-    private readonly SecurityVectorBatchService $batchService,
+    private readonly SecurityAuditBatchService $batchService,
   ) {
   }
 
@@ -24,7 +24,7 @@ final class SecurityVectorBatchForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    return new self(
           $container->get('analyze_ai_content_security_audit.batch_service'),
       );
   }

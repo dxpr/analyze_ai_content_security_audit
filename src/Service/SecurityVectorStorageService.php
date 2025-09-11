@@ -6,11 +6,11 @@ namespace Drupal\analyze_ai_content_security_audit\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 
 /**
@@ -24,7 +24,7 @@ final class SecurityVectorStorageService {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
-    private readonly LanguageManagerInterface $languageManager,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {
   }
 
@@ -94,7 +94,7 @@ final class SecurityVectorStorageService {
           'score' => $score,
           'content_hash' => $content_hash,
           'config_hash' => $config_hash,
-          'analyzed_timestamp' => \Drupal::time()->getRequestTime(),
+          'analyzed_timestamp' => \time(),
         ]);
       }
 

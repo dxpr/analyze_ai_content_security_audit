@@ -33,7 +33,7 @@ class AddVectorForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    return new self(
           $container->get('config.factory')
       );
   }

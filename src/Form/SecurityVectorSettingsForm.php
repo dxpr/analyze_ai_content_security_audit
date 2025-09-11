@@ -2,14 +2,54 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Form;
 
+use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure security vector analysis settings.
  */
 class SecurityVectorSettingsForm extends ConfigFormBase {
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
+   * The security vector storage service.
+   *
+   * @var \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService
+   */
+  protected SecurityVectorStorageService $storage;
+
+  /**
+   * Constructs a SecurityVectorSettingsForm object.
+   *
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
+   * @param \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService $storage
+   *   The security vector storage service.
+   */
+  public function __construct(AccountProxyInterface $current_user, SecurityVectorStorageService $storage) {
+    $this->currentUser = $current_user;
+    $this->storage = $storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new self(
+      $container->get('current_user'),
+      $container->get('analyze_ai_content_security_audit.storage')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -67,8 +107,7 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
     ];
 
     // Add link to reports page if user has permission.
-    $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('access site reports')) {
+    if ($this->currentUser->hasPermission('access site reports')) {
       $reports_url = Url::fromRoute('view.ai_content_security_audit_results.page_1');
       if ($reports_url->access()) {
         $form['actions_top'] = [
@@ -197,8 +236,7 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
 
     // Invalidate all cached security analysis results since configuration
     // changed.
-    \Drupal::service('analyze_ai_content_security_audit.storage')
-      ->invalidateConfigCache();
+    $this->storage->invalidateConfigCache();
 
     parent::submitForm($form, $form_state);
   }
