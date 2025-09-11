@@ -159,9 +159,9 @@ final class SecurityVectorStorageService {
    */
   public function getAverageScores(): array {
     $query = $this->database->select('analyze_ai_content_security_audit_results', 'r');
-    $query->fields('r', ['vector_id'])
-      ->addExpression('AVG(score)', 'average_score')
-      ->groupBy('vector_id');
+    $query->fields('r', ['vector_id']);
+    $query->addExpression('AVG(score)', 'average_score');
+    $query->groupBy('vector_id');
     $results = $query->execute()
       ->fetchAllKeyed();
 
