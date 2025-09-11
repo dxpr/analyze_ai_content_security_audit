@@ -50,7 +50,8 @@ final class SecurityVectorBatchService {
 
       $query = $this->entityTypeManager->getStorage($entity_type_id)
         ->getQuery()
-        ->accessCheck(TRUE)
+        // Batch operations should not be access-checked as they run in admin context.
+        ->accessCheck(FALSE)
         ->condition('type', $bundle);
 
       // Only include published content.

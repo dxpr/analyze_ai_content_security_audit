@@ -2,7 +2,6 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Plugin\Analyze;
 
-use Drupal\analyze_ai_content_security_audit\Form\SecurityVectorSettingsForm;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
@@ -147,9 +146,19 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $vectors = $this->storage->getVectors();
 
     if (empty($vectors)) {
-      // Load defaults from the settings form.
-      $form = new SecurityVectorSettingsForm($this->currentUser, $this->storage);
-      return $form->getDefaultVectors();
+      // Load defaults - use fallback defaults if settings form is unavailable.
+      return [
+        'pii_disclosure' => [
+          'label' => 'PII Disclosure',
+          'description' => 'Identifies potential disclosure of personally identifiable information (PII) in content.',
+          'weight' => 0,
+        ],
+        'credentials_disclosure' => [
+          'label' => 'Credentials Disclosure',
+          'description' => 'Detects potential exposure of credentials, API keys, passwords, or other sensitive authentication data.',
+          'weight' => 10,
+        ],
+      ];
     }
 
     return $vectors;
@@ -369,9 +378,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and strip HTML for security analysis.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-        ? $rendered->__toString()
-        : (string) $rendered;
+    $content = (string) $rendered;
 
     // Clean up the content for security analysis.
     $content = strip_tags($content);
@@ -591,7 +598,7 @@ EOT;
   /**
    * Gets the AI provider instance configured for chat operations.
    *
-   * @return \Drupal\ai\OperationType\Chat\ChatInterface|null
+   * @return \Drupal\ai\Plugin\ProviderProxy|null
    *   The configured AI provider, or NULL if none available.
    */
   private function getAiProvider() {

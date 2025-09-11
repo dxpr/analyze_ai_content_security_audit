@@ -37,6 +37,9 @@ fi
 # Install the statistics module if D11 (removed from core).
 composer require drupal/statistics --no-interaction
 
+# Install required dependencies for this module
+composer require drupal/analyze drupal/ai drupal/views_color_scales --no-interaction
+
 # Install PHPStan extensions for Drupal 11 and Drush for command analysis
 composer require --dev phpstan/phpstan mglaman/phpstan-drupal phpstan/phpstan-deprecation-rules drush/drush --with-all-dependencies --no-interaction
 
