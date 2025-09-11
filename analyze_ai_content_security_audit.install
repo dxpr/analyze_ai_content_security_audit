@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install, update and uninstall functions for analyze_ai_content_security_audit.
+ * Install, update and uninstall functions for the security audit module.
  */
 
 /**
