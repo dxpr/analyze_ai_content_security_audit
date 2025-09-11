@@ -24,7 +24,7 @@ final class SecurityVectorBatchForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new self(
+    return new static(
           $container->get('analyze_ai_content_security_audit.batch_service'),
       );
   }

@@ -42,7 +42,7 @@ class DeleteVectorForm extends ConfirmFormBase {
    * @param \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService $storage
    *   The security vector storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, SecurityVectorStorageService $storage) {
+  final public function __construct(ConfigFactoryInterface $config_factory, SecurityVectorStorageService $storage) {
     $this->configFactory = $config_factory;
     $this->storage = $storage;
   }
@@ -51,7 +51,7 @@ class DeleteVectorForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new self(
+    return new static(
           $container->get('config.factory'),
           $container->get('analyze_ai_content_security_audit.storage')
       );

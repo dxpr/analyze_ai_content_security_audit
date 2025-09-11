@@ -36,7 +36,7 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
    * @param \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService $storage
    *   The security vector storage service.
    */
-  public function __construct(AccountProxyInterface $current_user, SecurityVectorStorageService $storage) {
+  final public function __construct(AccountProxyInterface $current_user, SecurityVectorStorageService $storage) {
     $this->currentUser = $current_user;
     $this->storage = $storage;
   }
@@ -45,7 +45,7 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new self(
+    return new static(
       $container->get('current_user'),
       $container->get('analyze_ai_content_security_audit.storage')
     );
