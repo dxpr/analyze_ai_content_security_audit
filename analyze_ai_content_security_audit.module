@@ -2,7 +2,10 @@
 
 /**
  * @file
- * Analyze AI Content Security Audit module for security-focused content analysis.
+ * Analyze AI Content Security Audit module for security-focused analysis.
+ *
+ * This module provides AI-powered content security risk analysis identifying
+ * potential PII disclosure, credential exposure, and sensitive leaks.
  */
 
 use Drupal\Core\Link;

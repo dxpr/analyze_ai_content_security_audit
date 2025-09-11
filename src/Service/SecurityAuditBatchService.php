@@ -48,7 +48,8 @@ final class SecurityAuditBatchService {
 
       $query = $this->entityTypeManager->getStorage($entity_type_id)
         ->getQuery()
-        // Batch operations should not be access-checked as they run in admin context.
+        // Batch operations should not be access-checked as they run in admin
+        // context.
         ->accessCheck(FALSE)
         ->condition('type', $bundle);
 
@@ -196,7 +197,8 @@ final class SecurityAuditBatchService {
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
     // Get entities that have valid cached analysis.
     $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()
-      // Batch operations should not be access-checked as they run in admin context.
+      // Batch operations should not be access-checked as they run in admin
+      // context.
       ->accessCheck(FALSE)
       ->condition('type', $bundle);
 
