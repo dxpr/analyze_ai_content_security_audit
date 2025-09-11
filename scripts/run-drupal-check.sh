@@ -26,6 +26,8 @@ parameters:
         - web/modules/contrib/analyze_ai_content_security_audit
     # Set the analysis level (0-9)
     level: 5
+    # Treat PHPDoc types as less certain to avoid false positives with Drupal API methods
+    treatPhpDocTypesAsCertain: false
 EOF
 
 mkdir -p web/modules/contrib/
