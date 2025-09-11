@@ -10,7 +10,6 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 
 /**
@@ -24,7 +23,6 @@ final class SecurityVectorStorageService {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
-    private readonly LanguageManagerInterface $languageManager,
   ) {
   }
 
@@ -94,7 +92,7 @@ final class SecurityVectorStorageService {
           'score' => $score,
           'content_hash' => $content_hash,
           'config_hash' => $config_hash,
-          'analyzed_timestamp' => \Drupal::time()->getRequestTime(),
+          'analyzed_timestamp' => \time(),
         ]);
       }
 
@@ -159,9 +157,9 @@ final class SecurityVectorStorageService {
    */
   public function getAverageScores(): array {
     $query = $this->database->select('analyze_ai_content_security_audit_results', 'r');
-    $query->fields('r', ['vector_id'])
-      ->addExpression('AVG(score)', 'average_score')
-      ->groupBy('vector_id');
+    $query->fields('r', ['vector_id']);
+    $query->addExpression('AVG(score)', 'average_score');
+    $query->groupBy('vector_id');
     $results = $query->execute()
       ->fetchAllKeyed();
 
@@ -284,9 +282,7 @@ final class SecurityVectorStorageService {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and clean up.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-        ? $rendered->__toString()
-        : (string) $rendered;
+    $content = (string) $rendered;
 
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);

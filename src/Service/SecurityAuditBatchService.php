@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_content_security_audit\Service;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -18,6 +21,9 @@ final class SecurityAuditBatchService {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly SecurityVectorStorageService $storage,
+    private readonly PluginManagerInterface $analyzePluginManager,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly EntityTypeBundleInfoInterface $entityTypeBundleInfo,
   ) {
   }
 
@@ -42,7 +48,9 @@ final class SecurityAuditBatchService {
 
       $query = $this->entityTypeManager->getStorage($entity_type_id)
         ->getQuery()
-        ->accessCheck(TRUE)
+        // Batch operations should not be access-checked as they run in admin
+        // context.
+        ->accessCheck(FALSE)
         ->condition('type', $bundle);
 
       // Only include published content.
@@ -100,7 +108,7 @@ final class SecurityAuditBatchService {
     }
 
     try {
-      $analyzer = \Drupal::service('plugin.manager.analyze')
+      $analyzer = $this->analyzePluginManager
         ->createInstance('analyze_ai_content_security_audit_analyzer');
 
       foreach ($entities as $entity_data) {
@@ -158,14 +166,14 @@ final class SecurityAuditBatchService {
    *   Array of entity_type:bundle => label pairs.
    */
   public function getAvailableEntityBundles(): array {
-    $config = \Drupal::config('analyze.settings');
+    $config = $this->configFactory->get('analyze.settings');
     $status = $config->get('status') ?? [];
 
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
         if (isset($analyzers['analyze_ai_content_security_audit_analyzer'])) {
-          $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);
+          $bundle_info = $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
           $label = $bundle_info[$bundle]['label'] ?? $bundle;
           $options["{$entity_type_id}:{$bundle}"] = "{$entity_type_id} - {$label}";
         }
@@ -189,7 +197,9 @@ final class SecurityAuditBatchService {
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
     // Get entities that have valid cached analysis.
     $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()
-      ->accessCheck(TRUE)
+      // Batch operations should not be access-checked as they run in admin
+      // context.
+      ->accessCheck(FALSE)
       ->condition('type', $bundle);
 
     $all_ids = $query->execute();

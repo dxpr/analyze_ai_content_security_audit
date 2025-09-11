@@ -146,10 +146,19 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $vectors = $this->storage->getVectors();
 
     if (empty($vectors)) {
-      // Load defaults from the settings form.
-      $form = \Drupal::classResolver()
-        ->getInstanceFromDefinition('\Drupal\analyze_ai_content_security_audit\Form\SecurityVectorSettingsForm');
-      return $form->getDefaultVectors();
+      // Load defaults - use fallback defaults if settings form is unavailable.
+      return [
+        'pii_disclosure' => [
+          'label' => 'PII Disclosure',
+          'description' => 'Identifies potential disclosure of personally identifiable information (PII) in content.',
+          'weight' => 0,
+        ],
+        'credentials_disclosure' => [
+          'label' => 'Credentials Disclosure',
+          'description' => 'Detects potential exposure of credentials, API keys, passwords, or other sensitive authentication data.',
+          'weight' => 10,
+        ],
+      ];
     }
 
     return $vectors;
@@ -262,8 +271,6 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     // Show the highest risk score as a gauge.
     if (!empty($scores)) {
       $max_score = max($scores);
-      $vector_id = array_search($max_score, $scores);
-      $vector = $enabled_vectors[$vector_id] ?? reset($enabled_vectors);
 
       // Convert 0 to 100 range to 0 to 1 for gauge.
       $gauge_value = $max_score / 100;
@@ -281,11 +288,17 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
       ];
     }
 
-    // If no scores available but everything is configured correctly,
-    // show a helpful message.
+    // If no scores available, check if it's a provider issue or analysis
+    // failure.
     if (!empty($content = $this->getHtml($entity))) {
-      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
-      return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      $ai_provider = $this->getAiProvider();
+      if (!$ai_provider) {
+        $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+        return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      }
+      else {
+        return $this->createStatusTable($this->t('AI analysis failed to generate scores. Check logs for details or try again.'));
+      }
     }
 
     return $this->createStatusTable($this->t('This content has no text available for security analysis. Add content such as body text, fields, or descriptions to enable analysis.'));
@@ -323,8 +336,14 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     }
 
     if (empty($scores)) {
-      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
-      return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      $ai_provider = $this->getAiProvider();
+      if (!$ai_provider) {
+        $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+        return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      }
+      else {
+        return $this->createStatusTable($this->t('AI analysis failed to generate scores. Check logs for details or try again.'));
+      }
     }
 
     // Build gauges for each enabled vector.
@@ -344,6 +363,19 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
           '#range_max' => 100,
           '#value' => $gauge_value,
           '#display_value' => sprintf('%d', $scores[$id]),
+        ];
+      }
+      else {
+        // Show analysis failure message for vectors without scores.
+        $build[$id] = [
+          '#theme' => 'analyze_table',
+          '#table_title' => $vector['label'],
+          '#rows' => [
+            [
+              'label' => 'Status',
+              'data' => $this->t('AI analysis failed to generate score. Check logs for details or try again.'),
+            ],
+          ],
         ];
       }
     }
@@ -369,9 +401,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and strip HTML for security analysis.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-        ? $rendered->__toString()
-        : (string) $rendered;
+    $content = (string) $rendered;
 
     // Clean up the content for security analysis.
     $content = strip_tags($content);
@@ -454,6 +484,7 @@ EOT;
 
       // Get response.
       $messages = new ChatInput($chat_array);
+      /** @var \Drupal\ai\OperationType\Chat\ChatInterface $ai_provider */
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
 
       // Use the injected PromptJsonDecoder service.
@@ -518,7 +549,7 @@ EOT;
    * {@inheritdoc}
    */
   public function saveSettings(string $entity_type_id, ?string $bundle, array $settings): void {
-    $config = \Drupal::configFactory()->getEditable('analyze.settings');
+    $config = $this->configFactory->getEditable('analyze.settings');
     $current = $config->get('status') ?? [];
 
     // Save enabled state.
@@ -529,7 +560,7 @@ EOT;
 
     // Save vector settings if present.
     if (isset($settings['vectors'])) {
-      $detailed_config = \Drupal::configFactory()->getEditable('analyze.plugin_settings');
+      $detailed_config = $this->configFactory->getEditable('analyze.plugin_settings');
       $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
       $detailed_config->set($key, ['vectors' => $settings['vectors']])->save();
     }
@@ -590,7 +621,7 @@ EOT;
   /**
    * Gets the AI provider instance configured for chat operations.
    *
-   * @return \Drupal\ai\AiProviderInterface|null
+   * @return \Drupal\ai\Plugin\ProviderProxy|null
    *   The configured AI provider, or NULL if none available.
    */
   private function getAiProvider() {
@@ -609,7 +640,9 @@ EOT;
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
 
     // Configure provider with low temperature for more consistent results.
-    $ai_provider->setConfiguration(['temperature' => 0.2]);
+    if (method_exists($ai_provider, 'setConfiguration')) {
+      $ai_provider->setConfiguration(['temperature' => 0.2]);
+    }
 
     return $ai_provider;
   }

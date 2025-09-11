@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Form;
 
+use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -20,6 +21,13 @@ class DeleteVectorForm extends ConfirmFormBase {
   protected $configFactory;
 
   /**
+   * The security vector storage service.
+   *
+   * @var \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService
+   */
+  protected SecurityVectorStorageService $storage;
+
+  /**
    * The vector ID to delete.
    *
    * @var string
@@ -31,9 +39,12 @@ class DeleteVectorForm extends ConfirmFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService $storage
+   *   The security vector storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  final public function __construct(ConfigFactoryInterface $config_factory, SecurityVectorStorageService $storage) {
     $this->configFactory = $config_factory;
+    $this->storage = $storage;
   }
 
   /**
@@ -41,7 +52,8 @@ class DeleteVectorForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-          $container->get('config.factory')
+          $container->get('config.factory'),
+          $container->get('analyze_ai_content_security_audit.storage')
       );
   }
 
@@ -112,7 +124,6 @@ class DeleteVectorForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
-    $storage = \Drupal::service('analyze_ai_content_security_audit.storage');
 
     $config = $this->configFactory->get('analyze_ai_content_security_audit.settings');
     $vectors = $config->get('vectors');
@@ -121,7 +132,7 @@ class DeleteVectorForm extends ConfirmFormBase {
       $label = $vectors[$this->vectorId]['label'];
 
       // Use storage service to properly delete vector and associated data.
-      $storage->deleteVector($this->vectorId);
+      $this->storage->deleteVector($this->vectorId);
 
       $this->messenger()->addStatus($this->t('The security vector %label has been deleted.', [
         '%label' => $label,
