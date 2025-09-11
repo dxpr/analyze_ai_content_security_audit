@@ -288,11 +288,17 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
       ];
     }
 
-    // If no scores available but everything is configured correctly,
-    // show a helpful message.
+    // If no scores available, check if it's a provider issue or analysis
+    // failure.
     if (!empty($content = $this->getHtml($entity))) {
-      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
-      return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      $ai_provider = $this->getAiProvider();
+      if (!$ai_provider) {
+        $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+        return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      }
+      else {
+        return $this->createStatusTable($this->t('AI analysis failed to generate scores. Check logs for details or try again.'));
+      }
     }
 
     return $this->createStatusTable($this->t('This content has no text available for security analysis. Add content such as body text, fields, or descriptions to enable analysis.'));
@@ -330,8 +336,14 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     }
 
     if (empty($scores)) {
-      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
-      return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      $ai_provider = $this->getAiProvider();
+      if (!$ai_provider) {
+        $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+        return $this->createStatusTable($this->t('No chat AI provider is configured for security analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      }
+      else {
+        return $this->createStatusTable($this->t('AI analysis failed to generate scores. Check logs for details or try again.'));
+      }
     }
 
     // Build gauges for each enabled vector.
@@ -351,6 +363,19 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
           '#range_max' => 100,
           '#value' => $gauge_value,
           '#display_value' => sprintf('%d', $scores[$id]),
+        ];
+      }
+      else {
+        // Show analysis failure message for vectors without scores.
+        $build[$id] = [
+          '#theme' => 'analyze_table',
+          '#table_title' => $vector['label'],
+          '#rows' => [
+            [
+              'label' => 'Status',
+              'data' => $this->t('AI analysis failed to generate score. Check logs for details or try again.'),
+            ],
+          ],
         ];
       }
     }
