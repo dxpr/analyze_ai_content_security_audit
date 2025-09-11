@@ -16,8 +16,7 @@
     },
     "config": {
         "allow-plugins": {
-            "phpstan/extension-installer": true,
-            "tbachert/spi": true
+            "phpstan/extension-installer": true
         }
     }
 }
