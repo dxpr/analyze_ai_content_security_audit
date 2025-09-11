@@ -454,6 +454,7 @@ EOT;
 
       // Get response.
       $messages = new ChatInput($chat_array);
+      /** @var \Drupal\ai\OperationType\Chat\ChatInterface $ai_provider */
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
 
       // Use the injected PromptJsonDecoder service.
@@ -590,7 +591,7 @@ EOT;
   /**
    * Gets the AI provider instance configured for chat operations.
    *
-   * @return \Drupal\ai\AiProviderInterface|null
+   * @return \Drupal\ai\OperationType\Chat\ChatInterface|null
    *   The configured AI provider, or NULL if none available.
    */
   private function getAiProvider() {
@@ -609,7 +610,9 @@ EOT;
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
 
     // Configure provider with low temperature for more consistent results.
-    $ai_provider->setConfiguration(['temperature' => 0.2]);
+    if (method_exists($ai_provider, 'setConfiguration')) {
+      $ai_provider->setConfiguration(['temperature' => 0.2]);
+    }
 
     return $ai_provider;
   }
