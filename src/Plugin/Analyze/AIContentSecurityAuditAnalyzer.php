@@ -271,8 +271,6 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
     // Show the highest risk score as a gauge.
     if (!empty($scores)) {
       $max_score = max($scores);
-      $vector_id = array_search($max_score, $scores);
-      $vector = $enabled_vectors[$vector_id] ?? reset($enabled_vectors);
 
       // Convert 0 to 100 range to 0 to 1 for gauge.
       $gauge_value = $max_score / 100;
