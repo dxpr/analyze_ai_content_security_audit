@@ -71,10 +71,10 @@ function analyze_ai_content_security_audit_views_data() {
   $data['analyze_ai_content_security_audit_results']['langcode'] = [
     'title' => t('Language'),
     'help' => t('The language of the analyzed content.'),
-    'field' => ['id' => 'standard'],
-    'filter' => ['id' => 'string'],
+    'field' => ['id' => 'language'],
+    'filter' => ['id' => 'language'],
     'sort' => ['id' => 'standard'],
-    'argument' => ['id' => 'string'],
+    'argument' => ['id' => 'language'],
   ];
 
   // Vector ID field.
@@ -82,7 +82,10 @@ function analyze_ai_content_security_audit_views_data() {
     'title' => t('Security Vector'),
     'help' => t('The security vector identifier (e.g., "pii_disclosure", "credentials_disclosure").'),
     'field' => ['id' => 'standard'],
-    'filter' => ['id' => 'string'],
+    'filter' => [
+      'id' => 'analyze_select',
+      'options_callback' => 'analyze_ai_content_security_audit.storage:getVectorOptions',
+    ],
     'sort' => ['id' => 'standard'],
     'argument' => ['id' => 'string'],
   ];

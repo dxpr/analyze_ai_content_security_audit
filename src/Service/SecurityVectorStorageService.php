@@ -178,6 +178,21 @@ final class SecurityVectorStorageService {
   }
 
   /**
+   * Gets vector options for Views filter.
+   *
+   * @return array
+   *   Array of vector_id => label pairs for use in select widgets.
+   */
+  public function getVectorOptions(): array {
+    $vectors = $this->getVectors();
+    $options = [];
+    foreach ($vectors as $vector_id => $vector_data) {
+      $options[$vector_id] = $vector_data['label'] ?? $vector_id;
+    }
+    return $options;
+  }
+
+  /**
    * Gets a single security vector configuration.
    *
    * @param string $vector_id
