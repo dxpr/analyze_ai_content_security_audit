@@ -374,7 +374,7 @@ display:
       exposed_form:
         type: basic
         options:
-          submit_button: Search
+          submit_button: 'Apply filters'
           reset_button: false
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
@@ -405,6 +405,48 @@ display:
           granularity: second
       arguments: {  }
       filters:
+        langcode:
+          id: langcode
+          table: node_field_data
+          field: langcode
+          relationship: entity_id
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: langcode
+          plugin_id: language
+          operator: in
+          value:
+            '***LANGUAGE_site_default***': '***LANGUAGE_site_default***'
+          group: 1
+          exposed: true
+          expose:
+            operator_id: langcode_op
+            label: 'Translation language'
+            description: ''
+            use_operator: false
+            operator: langcode_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: langcode
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         vector_id_1:
           id: vector_id_1
           table: analyze_ai_content_security_audit_results
@@ -412,9 +454,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: string
-          operator: '='
-          value: ''
+          plugin_id: analyze_select
+          operator: in
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -457,7 +499,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: string
+          plugin_id: analyze_select
           operator: in
           value: {  }
           group: 1
