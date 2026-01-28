@@ -262,3 +262,295 @@ function analyze_ai_content_security_audit_update_8002() {
 
   return t('Updated view filters and submit button.');
 }
+
+/**
+ * Add view fields, filters, enable time_diff, and standardize display.
+ */
+function analyze_ai_content_security_audit_update_8003() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('views.view.ai_content_security_audit_results');
+
+  if ($config->isNew()) {
+    return t('View not found.');
+  }
+
+  $changes = [];
+
+  // Add content type filter if not present.
+  $filters = $config->get('display.default.display_options.filters') ?? [];
+  if (!isset($filters['type'])) {
+    $type_filter = [
+      'id' => 'type',
+      'table' => 'node_field_data',
+      'field' => 'type',
+      'relationship' => 'entity_id',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'node',
+      'entity_field' => 'type',
+      'plugin_id' => 'bundle',
+      'operator' => 'in',
+      'value' => [],
+      'group' => 1,
+      'exposed' => TRUE,
+      'expose' => [
+        'operator_id' => 'type_op',
+        'label' => 'Content type',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => 'type_op',
+        'operator_limit_selection' => FALSE,
+        'operator_list' => [],
+        'identifier' => 'type',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => ['authenticated' => 'authenticated'],
+        'reduce' => FALSE,
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'identifier' => '',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+    ];
+    $filters = ['type' => $type_filter] + $filters;
+    $config->set('display.default.display_options.filters', $filters);
+    $changes[] = 'content type filter';
+  }
+
+  // Define field templates.
+  $alter_defaults = [
+    'alter_text' => FALSE,
+    'text' => '',
+    'make_link' => FALSE,
+    'path' => '',
+    'absolute' => FALSE,
+    'external' => FALSE,
+    'replace_spaces' => FALSE,
+    'path_case' => 'none',
+    'trim_whitespace' => FALSE,
+    'alt' => '',
+    'rel' => '',
+    'link_class' => '',
+    'prefix' => '',
+    'suffix' => '',
+    'target' => '',
+    'nl2br' => FALSE,
+    'max_length' => 0,
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'more_link' => FALSE,
+    'more_link_text' => '',
+    'more_link_path' => '',
+    'strip_tags' => FALSE,
+    'trim' => FALSE,
+    'preserve_tags' => '',
+    'html' => FALSE,
+  ];
+
+  $time_diff_settings = [
+    'date_format' => 'medium',
+    'custom_date_format' => '',
+    'timezone' => '',
+    'tooltip' => ['date_format' => 'long', 'custom_date_format' => ''],
+    'time_diff' => [
+      'enabled' => TRUE,
+      'future_format' => '@interval hence',
+      'past_format' => '@interval ago',
+      'granularity' => 1,
+      'refresh' => 60,
+    ],
+  ];
+
+  $fields = $config->get('display.default.display_options.fields') ?? [];
+  $columns = $config->get('display.default.display_options.style.options.columns') ?? [];
+  $info = $config->get('display.default.display_options.style.options.info') ?? [];
+
+  // Set time ago format on analyzed_timestamp if present.
+  // Views Date plugin uses date_format option.
+  if (isset($fields['analyzed_timestamp'])) {
+    $fields['analyzed_timestamp']['date_format'] = 'time ago';
+    $fields['analyzed_timestamp']['custom_date_format'] = '';
+    $fields['analyzed_timestamp']['timezone'] = '';
+    $changes[] = 'time ago format on analyzed_timestamp';
+  }
+
+  // Add created field if not present.
+  if (!isset($fields['created'])) {
+    $fields['created'] = [
+      'id' => 'created',
+      'table' => 'node_field_data',
+      'field' => 'created',
+      'relationship' => 'entity_id',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'node',
+      'entity_field' => 'created',
+      'plugin_id' => 'field',
+      'label' => 'Created',
+      'exclude' => FALSE,
+      'alter' => $alter_defaults,
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => TRUE,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+      'click_sort_column' => 'value',
+      'type' => 'timestamp',
+      'settings' => $time_diff_settings,
+      'group_column' => 'value',
+      'group_columns' => [],
+      'group_rows' => TRUE,
+      'delta_limit' => 0,
+      'delta_offset' => 0,
+      'delta_reversed' => FALSE,
+      'delta_first_last' => FALSE,
+      'multi_type' => 'separator',
+      'separator' => ', ',
+      'field_api_classes' => FALSE,
+    ];
+    $columns['created'] = 'created';
+    $info['created'] = [
+      'sortable' => TRUE,
+      'default_sort_order' => 'desc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => FALSE,
+      'responsive' => '',
+    ];
+    $changes[] = 'created field';
+  }
+
+  // Add changed field if not present.
+  if (!isset($fields['changed'])) {
+    $fields['changed'] = [
+      'id' => 'changed',
+      'table' => 'node_field_data',
+      'field' => 'changed',
+      'relationship' => 'entity_id',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'node',
+      'entity_field' => 'changed',
+      'plugin_id' => 'field',
+      'label' => 'Last edited',
+      'exclude' => FALSE,
+      'alter' => $alter_defaults,
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => TRUE,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+      'click_sort_column' => 'value',
+      'type' => 'timestamp',
+      'settings' => $time_diff_settings,
+      'group_column' => 'value',
+      'group_columns' => [],
+      'group_rows' => TRUE,
+      'delta_limit' => 0,
+      'delta_offset' => 0,
+      'delta_reversed' => FALSE,
+      'delta_first_last' => FALSE,
+      'multi_type' => 'separator',
+      'separator' => ', ',
+      'field_api_classes' => FALSE,
+    ];
+    $columns['changed'] = 'changed';
+    $info['changed'] = [
+      'sortable' => TRUE,
+      'default_sort_order' => 'desc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => FALSE,
+      'responsive' => '',
+    ];
+    $changes[] = 'changed field';
+  }
+  else {
+    // Update label to "Last edited" for consistency.
+    $fields['changed']['label'] = 'Last edited';
+  }
+
+  // Add uid field if not present.
+  if (!isset($fields['uid'])) {
+    $fields['uid'] = [
+      'id' => 'uid',
+      'table' => 'node_field_data',
+      'field' => 'uid',
+      'relationship' => 'entity_id',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'entity_type' => 'node',
+      'entity_field' => 'uid',
+      'plugin_id' => 'field',
+      'label' => 'Authored by',
+      'exclude' => FALSE,
+      'alter' => $alter_defaults,
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => TRUE,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => TRUE,
+      'empty' => '',
+      'hide_empty' => FALSE,
+      'empty_zero' => FALSE,
+      'hide_alter_empty' => TRUE,
+      'click_sort_column' => 'target_id',
+      'type' => 'entity_reference_label',
+      'settings' => ['link' => FALSE],
+      'group_column' => 'target_id',
+      'group_columns' => [],
+      'group_rows' => TRUE,
+      'delta_limit' => 0,
+      'delta_offset' => 0,
+      'delta_reversed' => FALSE,
+      'delta_first_last' => FALSE,
+      'multi_type' => 'separator',
+      'separator' => ', ',
+      'field_api_classes' => FALSE,
+    ];
+    $columns['uid'] = 'uid';
+    $info['uid'] = [
+      'sortable' => TRUE,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => FALSE,
+      'responsive' => '',
+    ];
+    $changes[] = 'uid field';
+  }
+
+  $config->set('display.default.display_options.fields', $fields);
+  $config->set('display.default.display_options.style.options.columns', $columns);
+  $config->set('display.default.display_options.style.options.info', $info);
+  $config->save();
+
+  return t('Updated: @changes.', ['@changes' => implode(', ', $changes)]);
+}
