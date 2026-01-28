@@ -61,43 +61,40 @@ final class SecurityVectorStorageService {
    *   Array of vector_id => score pairs.
    */
   public function saveScores(EntityInterface $entity, array $scores): void {
-    $content_hash = $this->generateContentHash($entity);
-    $config_hash = $this->generateConfigHash();
-
-    // Delete existing scores for this entity/language combination.
-    $this->database->delete('analyze_ai_content_security_audit_results')
-      ->condition('entity_type', $entity->getEntityTypeId())
-      ->condition('entity_id', $entity->id())
-      ->condition('langcode', $entity->language()->getId())
-      ->execute();
-
-    // Insert new scores.
-    if (!empty($scores)) {
-      $insert = $this->database->insert('analyze_ai_content_security_audit_results')
-        ->fields([
-          'entity_type', 'entity_id', 'entity_revision_id', 'langcode',
-          'vector_id', 'score', 'content_hash', 'config_hash', 'analyzed_timestamp',
-        ]);
-
-      foreach ($scores as $vector_id => $score) {
-        // Ensure score is within valid range (0-100).
-        $score = max(0, min(100, (int) $score));
-
-        $insert->values([
-          'entity_type' => $entity->getEntityTypeId(),
-          'entity_id' => $entity->id(),
-          'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : NULL,
-          'langcode' => $entity->language()->getId(),
-          'vector_id' => $vector_id,
-          'score' => $score,
-          'content_hash' => $content_hash,
-          'config_hash' => $config_hash,
-          'analyzed_timestamp' => \time(),
-        ]);
-      }
-
-      $insert->execute();
+    foreach ($scores as $vector_id => $score) {
+      $this->saveScore($entity, $vector_id, $score);
     }
+  }
+
+  /**
+   * Saves a single security score for an entity and vector.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the score is for.
+   * @param string $vector_id
+   *   The security vector ID.
+   * @param int $score
+   *   The security risk score (0-100).
+   */
+  public function saveScore(EntityInterface $entity, string $vector_id, int $score): void {
+    // Ensure score is within valid range (0-100).
+    $score = max(0, min(100, $score));
+
+    $this->database->merge('analyze_ai_content_security_audit_results')
+      ->keys([
+        'entity_type' => $entity->getEntityTypeId(),
+        'entity_id' => $entity->id(),
+        'vector_id' => $vector_id,
+        'langcode' => $entity->language()->getId(),
+      ])
+      ->fields([
+        'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : 0,
+        'score' => $score,
+        'content_hash' => $this->generateContentHash($entity),
+        'config_hash' => $this->generateConfigHash(),
+        'analyzed_timestamp' => \time(),
+      ])
+      ->execute();
   }
 
   /**
