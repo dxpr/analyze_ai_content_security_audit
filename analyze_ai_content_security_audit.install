@@ -345,7 +345,8 @@ function analyze_ai_content_security_audit_update_8003() {
   $columns = $config->get('display.default.display_options.style.options.columns') ?? [];
   $info = $config->get('display.default.display_options.style.options.info') ?? [];
 
-  // Set time ago format on analyzed_timestamp if present (Views Date plugin uses date_format option).
+  // Set time ago format on analyzed_timestamp if present.
+  // Views Date plugin uses date_format option.
   if (isset($fields['analyzed_timestamp'])) {
     $fields['analyzed_timestamp']['date_format'] = 'time ago';
     $fields['analyzed_timestamp']['custom_date_format'] = '';
@@ -443,7 +444,5 @@ function analyze_ai_content_security_audit_update_8003() {
   $config->set('display.default.display_options.style.options.info', $info);
   $config->save();
 
-  return empty($changes)
-    ? t('No updates needed.')
-    : t('Updated: @changes.', ['@changes' => implode(', ', $changes)]);
+  return t('Updated: @changes.', ['@changes' => implode(', ', $changes)]);
 }
