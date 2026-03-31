@@ -1,58 +1,52 @@
 <p>This module is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem and included in <a href="https://www.drupal.org/project/dxpr_cms">DXPR CMS</a>.</p>
 
-<h2>AI-Powered Content Security Risk Analysis</h2>
+<h2>Sensitive Data Leaks in Content Are Invisible Until They're Not</h2>
 
-<blockquote>Protect your organization from security risks with intelligent AI analysis that identifies potential PII disclosure, credential exposure, and other sensitive information leaks in your content before publication.</blockquote>
+<blockquote>A support article accidentally includes a customer's email. A developer pastes an API key into a documentation page. A case study reveals a client's internal project name. These things happen — and by the time someone notices, the damage is done. This module scans every piece of content for security risks before they become incidents.</blockquote>
 
-<h3>You need Content Security Audit if</h3>
+<h3>You need AI Content Security Audit if</h3>
 <ul>
-  <li>Your organization publishes sensitive content that must comply with privacy regulations</li>
-  <li>You need to prevent accidental disclosure of PII, credentials, or proprietary information</li>
-  <li>Your content workflow requires security risk assessment before publication</li>
-  <li>You want automated detection of potential data leaks in large content volumes</li>
+  <li>Your content includes real customer data, internal systems, or technical details that could leak</li>
+  <li>Compliance regulations (GDPR, HIPAA, SOC 2) require you to prevent PII disclosure in published content</li>
+  <li>Developers or technical writers contribute content that may contain credentials, API keys, or tokens</li>
+  <li>You want automated screening of content before publication, not manual review that misses things</li>
 </ul>
 
-<h2>Advanced Security Analysis</h2>
+<h2>What You Get</h2>
 <ul>
   <li>
-    <strong>Configurable Security Vectors</strong>
-    <p>Flexible security vector management through admin UI with customizable risk scoring from 0 (no risk) to 100 (high risk).</p>
+    <strong>Risk score per page (0-100)</strong>
+    <p>Every content entity gets a security risk score per detection vector — 0 means no risk, 100 means critical. Displayed as a visual gauge so editors immediately see which pages need attention.</p>
   </li>
   <li>
-    <strong>Pre-Configured Risk Detection</strong>
-    <p>Built-in security vectors for common vulnerability patterns:</p>
+    <strong>Built-in detection for common leaks</strong>
+    <p>Ships with two security vectors ready to go:</p>
     <ul>
-      <li><strong>PII Disclosure</strong> - Identifies potential exposure of personally identifiable information</li>
-      <li><strong>Credentials Disclosure</strong> - Detects API keys, passwords, and authentication data exposure</li>
+      <li><strong>PII Disclosure</strong> — names, addresses, phone numbers, SSNs, email addresses</li>
+      <li><strong>Credentials Disclosure</strong> — API keys, passwords, tokens, database credentials</li>
     </ul>
   </li>
   <li>
-    <strong>Custom Security Vectors</strong>
-    <p>Add and delete custom security vectors tailored to your organization's specific security policies and compliance requirements.</p>
+    <strong>Custom security vectors</strong>
+    <p>Add your own detection vectors for organization-specific risks — proprietary project names, internal URLs, partner data, anything your security policy requires.</p>
   </li>
   <li>
-    <strong>Intelligent Batch Processing</strong>
-    <p>Comprehensive batch analysis capabilities with per-vector processing for focused security audits of existing content.</p>
-  </li>
-  <li>
-    <strong>Visual Risk Assessment</strong>
-    <p>Intuitive risk indicators and reporting dashboards provide quick security status overview with detailed findings.</p>
+    <strong>Batch scanning for existing content</strong>
+    <p>Audit your entire content library to find pages that were published before security review was in place. Prioritize remediation by risk score.</p>
   </li>
 </ul>
 
-<h2>Security Setup Guide</h2>
+<h2>Getting Started</h2>
 <ol>
-  <li>Configure AI provider settings at /admin/config/ai/providers</li>
-  <li>Manage security vectors at /admin/config/analyze/content-security-audit</li>
-  <li>Enable/disable the analyzer per content type at /admin/config/content/analyze-settings</li>
-  <li>Configure permissions at /admin/people/permissions#module-analyze_ai_content_security_audit</li>
-  <li>Access security audit through the Analyze tab on content</li>
-  <li>Run batch security analysis at /admin/config/analyze/content-security-audit/batch</li>
+  <li>Set up an AI provider at /admin/config/ai/providers</li>
+  <li>Review security vectors at /admin/config/analyze/content-security-audit (or add custom ones)</li>
+  <li>Enable the analyzer per content type at /admin/config/content/analyze-settings</li>
+  <li>Open any content entity's Analyze tab to see risk scores</li>
 </ol>
 
 <div class="note-tip">
   <h4>Prefer a turnkey demo site?</h4>
-  <p>Spin up <strong>DXPR CMS</strong>—Drupal pre-configured with DXPR Builder, DXPR Theme, AI Content Security Audit module, and security best practices.</p>
+  <p>Spin up <strong>DXPR CMS</strong> — Drupal pre-configured with DXPR Builder, DXPR Theme, the full Analyze suite including AI Security Audit, and security best practices out of the box.</p>
   <p><a href="https://www.drupal.org/project/dxpr_cms" title="DXPR CMS platform">Get DXPR CMS »</a></p>
 </div>
 
@@ -60,8 +54,8 @@
 <p>
   This module requires:
   <ul>
-    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module</li>
-    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured provider</li>
-    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module (provides colored tables for report page)</li>
+    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module (>=1.1.0)</li>
+    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured chat provider</li>
+    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module</li>
   </ul>
 </p>
