@@ -508,6 +508,9 @@ EOT;
 
       return $scores;
     }
+    catch (\Drupal\ai\Exception\AiRateLimitException $e) {
+      throw $e;
+    }
     catch (\Exception $e) {
       return [];
     }
