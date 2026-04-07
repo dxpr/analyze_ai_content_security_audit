@@ -63,25 +63,35 @@ Security risks scored from 0-100:
 - **51-75**: High risk - Significant exposure potential
 - **76-100**: Critical risk - Immediate attention required
 
-## CLI & AI Agent Support
+## AI Coding Assistant Integration
 
-### Batch Processing
+The Content Security Audit module includes a built-in
+[Agent Skills](https://agentskills.io) file (via the base
+Analyze module) that teaches AI coding assistants how to run
+security audit analysis through natural language. Run
+`drush analyze:setup-ai` to enable, then ask naturally:
 
-Batch analysis is available through the centralized Analyze
+```
+"Scan all content for security risks"
+"Check if any pages expose PII or credentials"
+"Run a security audit on all published articles"
+"Analyze security vectors across the entire site"
+```
+
+Batch processing is available via the centralized Analyze
 batch system:
 
-- **Admin UI**: Administration > Configuration > Content >
-  Batch Analysis (`/admin/config/content/analyze-batch`)
-- **Drush CLI**:
-  `drush analyze:batch --analyzers=analyze_ai_content_security_audit_analyzer`
+```bash
+drush analyze:batch \
+  --analyzers=analyze_ai_content_security_audit_analyzer
+drush analyze:batch \
+  --analyzers=analyze_ai_content_security_audit_analyzer \
+  --types=node:article --force
+```
 
-See the [Analyze module](https://www.drupal.org/project/analyze)
-for full batch command options.
-
-### AI Agent Integration
-
-AI agents can access security audit analysis through the centralized
-Analyze skill files. Install with `drush analyze:setup-ai`.
+Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
+Copilot, Cursor, and other tools supporting the
+[Agent Skills standard](https://agentskills.io/specification).
 
 ## Compliance Use Cases
 
