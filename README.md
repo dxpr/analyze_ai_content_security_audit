@@ -39,12 +39,6 @@ drush en analyze_ai_content_security_audit
 - **Edit vectors**: Modify existing security policies
 - **Delete vectors**: Remove vectors and associated analysis results
 
-### Batch Processing
-1. Go to `/admin/config/analyze/content-security-audit/batch`
-2. Select content types and processing limits
-3. Choose per-vector processing for focused audits
-4. Monitor security analysis progress
-
 ## Default Security Vectors
 
 ### PII Disclosure
@@ -69,16 +63,25 @@ Security risks scored from 0-100:
 - **51-75**: High risk - Significant exposure potential
 - **76-100**: Critical risk - Immediate attention required
 
-## Batch Processing
+## CLI & AI Agent Support
 
-This module integrates with the centralized batch processing system provided
-by the Analyze base module. Use the Analyze batch UI or Drush commands to
-process content across all enabled analyzers, including security audits.
+### Batch Processing
 
-- Select specific content types for targeted analysis
-- Use per-vector processing for focused security audits
-- Force re-analysis when security policies change
-- Run batch processing via Drush: `drush analyze:batch`
+Batch analysis is available through the centralized Analyze
+batch system:
+
+- **Admin UI**: Administration > Configuration > Content >
+  Batch Analysis (`/admin/config/content/analyze-batch`)
+- **Drush CLI**:
+  `drush analyze:batch --analyzers=analyze_ai_content_security_audit_analyzer`
+
+See the [Analyze module](https://www.drupal.org/project/analyze)
+for full batch command options.
+
+### AI Agent Integration
+
+AI agents can access security audit analysis through the centralized
+Analyze skill files. Install with `drush analyze:setup-ai`.
 
 ## Compliance Use Cases
 
