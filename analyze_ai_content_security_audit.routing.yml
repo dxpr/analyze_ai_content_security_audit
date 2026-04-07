@@ -21,11 +21,3 @@ analyze_ai_content_security_audit.vector.delete:
     _title: 'Delete Security Vector'
   requirements:
     _permission: 'administer analyze settings'
-
-analyze_ai_content_security_audit.batch:
-  path: '/admin/config/analyze/content-security-audit/batch'
-  defaults:
-    _form: 'Drupal\analyze_ai_content_security_audit\Form\SecurityAuditBatchForm'
-    _title: 'Batch Security Audit Analysis'
-  requirements:
-    _permission: 'administer analyze settings'

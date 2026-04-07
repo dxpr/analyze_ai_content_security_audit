@@ -107,6 +107,7 @@ final class SecurityVectorStorageService {
     $this->database->delete('analyze_ai_content_security_audit_results')
       ->condition('entity_type', $entity->getEntityTypeId())
       ->condition('entity_id', $entity->id())
+      ->condition('langcode', $entity->language()->getId())
       ->execute();
   }
 

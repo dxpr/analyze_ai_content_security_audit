@@ -2,7 +2,3 @@ services:
   analyze_ai_content_security_audit.storage:
     class: Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService
     arguments: ['@database', '@config.factory', '@entity_type.manager', '@renderer']
-
-  analyze_ai_content_security_audit.batch_service:
-    class: Drupal\analyze_ai_content_security_audit\Service\SecurityAuditBatchService
-    arguments: ['@entity_type.manager', '@analyze_ai_content_security_audit.storage', '@plugin.manager.analyze', '@config.factory', '@entity_type.bundle.info']
