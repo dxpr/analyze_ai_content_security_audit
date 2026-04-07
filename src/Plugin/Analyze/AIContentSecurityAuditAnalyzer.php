@@ -7,6 +7,7 @@ use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\analyze\AnalyzePluginBase;
+use Drupal\analyze\BatchableAnalyzerInterface;
 use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Analyzes content for security risks using AI.")
  * )
  */
-final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
+final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
   /**
    * The AI provider manager.
    *
@@ -659,6 +660,27 @@ EOT;
       return NULL;
     }
     return $defaults;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processEntity(EntityInterface $entity, bool $force_refresh = FALSE): bool {
+    if (!$force_refresh && $this->hasResults($entity)) {
+      return FALSE;
+    }
+    if ($force_refresh) {
+      $this->storage->deleteScores($entity);
+    }
+    $this->renderSummary($entity);
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasResults(EntityInterface $entity): bool {
+    return !empty($this->storage->getScores($entity));
   }
 
 }

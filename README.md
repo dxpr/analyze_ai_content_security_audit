@@ -71,11 +71,14 @@ Security risks scored from 0-100:
 
 ## Batch Processing
 
-Process content during low-traffic periods:
+This module integrates with the centralized batch processing system provided
+by the Analyze base module. Use the Analyze batch UI or Drush commands to
+process content across all enabled analyzers, including security audits.
+
 - Select specific content types for targeted analysis
 - Use per-vector processing for focused security audits
-- Monitor server resources during large batch operations
 - Force re-analysis when security policies change
+- Run batch processing via Drush: `drush analyze:batch`
 
 ## Compliance Use Cases
 
