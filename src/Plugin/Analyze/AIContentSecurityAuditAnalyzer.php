@@ -2,11 +2,13 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Plugin\Analyze;
 
+use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\analyze\AnalyzePluginBase;
+use Drupal\analyze\BatchableAnalyzerInterface;
 use Drupal\analyze_ai_content_security_audit\Service\SecurityVectorStorageService;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -26,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Analyzes content for security risks using AI.")
  * )
  */
-final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
+final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
   /**
    * The AI provider manager.
    *
@@ -229,10 +231,10 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
       '#theme' => 'analyze_table',
       '#table_title' => 'Content Security Audit',
       '#rows' => [
-      [
-        'label' => 'Status',
-        'data' => $message,
-      ],
+        [
+          'label' => 'Status',
+          'data' => $message,
+        ],
       ],
     ];
   }
@@ -398,7 +400,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase {
 
     // Get the rendered entity view in default mode.
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->render($view);
+    $rendered = $this->renderer->renderInIsolation($view);
 
     // Convert to string and strip HTML for security analysis.
     $content = (string) $rendered;
@@ -506,6 +508,9 @@ EOT;
       }
 
       return $scores;
+    }
+    catch (AiRateLimitException $e) {
+      throw $e;
     }
     catch (\Exception $e) {
       return [];
@@ -659,6 +664,38 @@ EOT;
       return NULL;
     }
     return $defaults;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processEntity(EntityInterface $entity, bool $force_refresh = FALSE): bool {
+    if (!$force_refresh && $this->hasResults($entity)) {
+      return FALSE;
+    }
+    if ($force_refresh) {
+      $this->storage->deleteScores($entity);
+    }
+    $scores = $this->analyzeSecurityRisks($entity);
+    if (!empty($scores)) {
+      $this->storage->saveScores($entity, $scores);
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasResults(EntityInterface $entity): bool {
+    return !empty($this->storage->getScores($entity));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
+    return $this->storage->countAnalyzedEntities($entity_type_id, $bundle);
   }
 
 }

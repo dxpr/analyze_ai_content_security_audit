@@ -39,12 +39,6 @@ drush en analyze_ai_content_security_audit
 - **Edit vectors**: Modify existing security policies
 - **Delete vectors**: Remove vectors and associated analysis results
 
-### Batch Processing
-1. Go to `/admin/config/analyze/content-security-audit/batch`
-2. Select content types and processing limits
-3. Choose per-vector processing for focused audits
-4. Monitor security analysis progress
-
 ## Default Security Vectors
 
 ### PII Disclosure
@@ -69,13 +63,45 @@ Security risks scored from 0-100:
 - **51-75**: High risk - Significant exposure potential
 - **76-100**: Critical risk - Immediate attention required
 
-## Batch Processing
+## AI Coding Assistant Integration
 
-Process content during low-traffic periods:
-- Select specific content types for targeted analysis
-- Use per-vector processing for focused security audits
-- Monitor server resources during large batch operations
-- Force re-analysis when security policies change
+The Content Security Audit module includes a built-in
+[Agent Skills](https://agentskills.io) file (via the base
+Analyze module) that teaches AI coding assistants how to run
+security audit analysis through natural language. Run
+`drush analyze:setup-ai` to enable, then ask naturally:
+
+```
+"Scan all content for security risks"
+"Check if any pages expose PII or credentials"
+"Run a security audit on all published articles"
+"Analyze security vectors across the entire site"
+```
+
+Batch processing is available via the centralized Analyze
+batch system:
+
+```bash
+# Check analysis coverage
+drush analyze:batch --status
+
+# Run this analyzer on all enabled content types
+drush analyze:batch \
+  --analyzers=analyze_ai_content_security_audit_analyzer
+
+# Run on specific content types with limit
+drush analyze:batch \
+  --analyzers=analyze_ai_content_security_audit_analyzer \
+  --types=node:article --limit=50
+
+# Force re-analysis of already analyzed content
+drush analyze:batch \
+  --analyzers=analyze_ai_content_security_audit_analyzer --force
+```
+
+Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
+Copilot, Cursor, and other tools supporting the
+[Agent Skills standard](https://agentskills.io/specification).
 
 ## Compliance Use Cases
 

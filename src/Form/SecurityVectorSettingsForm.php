@@ -140,11 +140,11 @@ class SecurityVectorSettingsForm extends ConfigFormBase {
         $this->t('Operations'),
       ],
       '#tabledrag' => [
-      [
-        'action' => 'order',
-        'relationship' => 'sibling',
-        'group' => 'vector-weight',
-      ],
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'vector-weight',
+        ],
       ],
     ];
 

@@ -2,9 +2,3 @@ analyze_ai_content_security_audit.settings:
   route_name: analyze_ai_content_security_audit.settings
   title: 'Settings'
   base_route: analyze_ai_content_security_audit.settings
-
-analyze_ai_content_security_audit.batch:
-  route_name: analyze_ai_content_security_audit.batch
-  title: 'Batch Analysis'
-  base_route: analyze_ai_content_security_audit.settings
-  weight: 10

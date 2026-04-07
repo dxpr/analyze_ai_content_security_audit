@@ -107,6 +107,7 @@ final class SecurityVectorStorageService {
     $this->database->delete('analyze_ai_content_security_audit_results')
       ->condition('entity_type', $entity->getEntityTypeId())
       ->condition('entity_id', $entity->id())
+      ->condition('langcode', $entity->language()->getId())
       ->execute();
   }
 
@@ -291,7 +292,7 @@ final class SecurityVectorStorageService {
     // Render the entity in default view mode.
     $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     $view = $view_builder->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->render($view);
+    $rendered = $this->renderer->renderInIsolation($view);
 
     // Convert to string and clean up.
     $content = (string) $rendered;
@@ -303,6 +304,28 @@ final class SecurityVectorStorageService {
     $content = trim($content);
 
     return $content;
+  }
+
+  /**
+   * Counts the number of analyzed entities for a given type and bundle.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $bundle
+   *   The bundle.
+   *
+   * @return int
+   *   The count of analyzed entities.
+   */
+  public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
+    $query = $this->database->select('analyze_ai_content_security_audit_results', 'r');
+    $query->condition('r.entity_type', $entity_type_id);
+    if ($entity_type_id === 'node') {
+      $query->join('node_field_data', 'n', 'r.entity_id = n.nid AND r.entity_type = :type', [':type' => 'node']);
+      $query->condition('n.type', $bundle);
+    }
+    $query->addExpression('COUNT(DISTINCT r.entity_id)');
+    return (int) $query->execute()->fetchField();
   }
 
 }
