@@ -230,10 +230,10 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase implements 
       '#theme' => 'analyze_table',
       '#table_title' => 'Content Security Audit',
       '#rows' => [
-      [
-        'label' => 'Status',
-        'data' => $message,
-      ],
+        [
+          'label' => 'Status',
+          'data' => $message,
+        ],
       ],
     ];
   }
