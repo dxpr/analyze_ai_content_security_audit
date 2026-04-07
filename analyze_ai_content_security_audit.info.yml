@@ -4,7 +4,7 @@ description: 'A submodule for Analyze that provides AI-powered content security 
 package: Analyze
 core_version_requirement: ^10.2 || ^11
 dependencies:
-  - analyze:analyze (>=1.1.0)
+  - analyze:analyze (>=1.2.0)
   - views_color_scales:views_color_scales
   - ai:ai
 configure: analyze_ai_content_security_audit.settings
