@@ -18,7 +18,8 @@ echo "TARGET_DRUPAL_CORE_VERSION: $TARGET_DRUPAL_CORE_VERSION"
 composer config --global allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 
 composer global require drupal/coder --dev
-composer global require phpcompatibility/php-compatibility --dev
+# Install PHPCompatibility dev branch for phpcs v4 support.
+composer global require phpcompatibility/php-compatibility:dev-develop --dev
 
 export PATH="$PATH:$COMPOSER_HOME/vendor/bin"
 
