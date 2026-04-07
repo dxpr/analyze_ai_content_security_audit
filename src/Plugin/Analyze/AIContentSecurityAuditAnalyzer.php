@@ -400,7 +400,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase implements 
 
     // Get the rendered entity view in default mode.
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->renderPlain($view);
+    $rendered = $this->renderer->renderInIsolation($view);
 
     // Convert to string and strip HTML for security analysis.
     $content = (string) $rendered;
