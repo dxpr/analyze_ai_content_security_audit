@@ -120,8 +120,9 @@ Copilot, Cursor, and other tools supporting the
 
 ## Related Modules
 
-- [Analyze](https://www.drupal.org/project/analyze)
-- [Analyze Broken Links](https://www.drupal.org/project/analyze_broken_links)
-- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments)
-- [AI](https://www.drupal.org/project/ai) - Artificial Intelligence integration for Drupal
-- [ECA](https://www.drupal.org/project/eca) - Event-Condition-Action automation for Drupal
+- [Analyze](https://www.drupal.org/project/analyze) - Required. Provides the plugin framework, Analyze tab, and batch processing this module extends
+- [AI](https://www.drupal.org/project/ai) - Required. Supplies the LLM provider used for evaluating content against security vectors
+- [Views Color Scales](https://www.drupal.org/project/views_color_scales) - Required. Renders color-coded risk score columns in the security audit Views report
+- [AI Content Marketing Audit](https://www.drupal.org/project/analyze_ai_content_marketing_audit) - Sibling Analyze plugin that scores marketing effectiveness
+- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments) - Sibling Analyze plugin that measures tone, trust, and reading level
+- [Analyze Broken Links](https://www.drupal.org/project/analyze_broken_links) - Sibling Analyze plugin that checks link health without AI
