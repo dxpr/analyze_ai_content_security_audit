@@ -1,4 +1,11 @@
-# AI Content Security Audit
+> **Analyze AI Content Security Audit** is a Drupal module by [DXPR](https://dxpr.com) that
+> scans Drupal content for security risks, PII exposure, and compliance issues using AI analysis. Part of the [Analyze](https://www.drupal.org/project/analyze) ecosystem, maintained by [DXPR](https://dxpr.com).
+>
+> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Pricing](https://dxpr.com/pricing) |
+> [Try Free Demo](https://dxpr.com/try)
+
+# AI Content Security Audit: AI-Powered PII and Credential Leak Detection for Drupal
 
 AI-powered content security risk analysis identifying potential PII disclosure,
 credential exposure, and sensitive information leaks before publication.
@@ -110,3 +117,12 @@ Copilot, Cursor, and other tools supporting the
 - **Publication Workflows**: Security risk assessment before content goes
   live
 - **Audit Trails**: Historical tracking of security risk remediation
+
+## Related Modules
+
+- [Analyze](https://www.drupal.org/project/analyze) - Required. Provides the plugin framework, Analyze tab, and batch processing this module extends
+- [AI](https://www.drupal.org/project/ai) - Required. Supplies the LLM provider used for evaluating content against security vectors
+- [Views Color Scales](https://www.drupal.org/project/views_color_scales) - Required. Renders color-coded risk score columns in the security audit Views report
+- [AI Content Marketing Audit](https://www.drupal.org/project/analyze_ai_content_marketing_audit) - Sibling Analyze plugin that scores marketing effectiveness
+- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments) - Sibling Analyze plugin that measures tone, trust, and reading level
+- [Analyze Broken Links](https://www.drupal.org/project/analyze_broken_links) - Sibling Analyze plugin that checks link health without AI
