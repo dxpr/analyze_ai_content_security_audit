@@ -1,4 +1,8 @@
-# AI Content Security Audit
+> Part of [DXPR CMS](https://dxpr.com/c/marketing-cms): The AI-Powered Drupal CMS
+>
+> [Documentation](https://dxpr.com/docs) | [Try Free](https://dxpr.com/try) | [dxpr.com](https://dxpr.com)
+
+# AI Content Security Audit: AI-Powered PII and Credential Leak Detection for Drupal
 
 AI-powered content security risk analysis identifying potential PII disclosure,
 credential exposure, and sensitive information leaks before publication.
@@ -110,3 +114,9 @@ Copilot, Cursor, and other tools supporting the
 - **Publication Workflows**: Security risk assessment before content goes
   live
 - **Audit Trails**: Historical tracking of security risk remediation
+
+## Related DXPR Modules
+
+- [Analyze](https://www.drupal.org/project/analyze)
+- [Analyze Broken Links](https://www.drupal.org/project/analyze_broken_links)
+- [AI Sentiments Analysis](https://www.drupal.org/project/analyze_ai_sentiments)
