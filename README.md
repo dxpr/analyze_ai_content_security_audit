@@ -1,9 +1,9 @@
 > **Analyze AI Content Security Audit** is a Drupal module by [DXPR](https://dxpr.com) that
 > scans Drupal content for security risks, PII exposure, and compliance issues using AI analysis. Part of the [Analyze](https://www.drupal.org/project/analyze) ecosystem, maintained by [DXPR](https://dxpr.com).
 >
-> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Getting Started](https://dxpr.com/c/marketing-cms) |
 > [Pricing](https://dxpr.com/pricing) |
-> [Try Free Demo](https://dxpr.com/try)
+> [Try Free Demo](https://try.dxpr.com)
 
 # AI Content Security Audit: AI-Powered PII and Credential Leak Detection for Drupal
 
