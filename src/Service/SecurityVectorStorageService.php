@@ -328,4 +328,27 @@ final class SecurityVectorStorageService {
     return (int) $query->execute()->fetchField();
   }
 
+  /**
+   * Gets entity IDs that have stored results for a given type and bundle.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $bundle
+   *   The bundle.
+   *
+   * @return array<string|int>
+   *   Array of entity IDs with existing results.
+   */
+  public function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
+    $query = $this->database->select('analyze_ai_content_security_audit_results', 'r');
+    $query->addField('r', 'entity_id');
+    $query->condition('r.entity_type', $entity_type_id);
+    if ($entity_type_id === 'node') {
+      $query->join('node_field_data', 'n', 'r.entity_id = n.nid AND r.entity_type = :type', [':type' => 'node']);
+      $query->condition('n.type', $bundle);
+    }
+    $query->distinct();
+    return $query->execute()->fetchCol();
+  }
+
 }
