@@ -698,4 +698,11 @@ EOT;
     return $this->storage->countAnalyzedEntities($entity_type_id, $bundle);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
+    return $this->storage->getAnalyzedEntityIds($entity_type_id, $bundle);
+  }
+
 }

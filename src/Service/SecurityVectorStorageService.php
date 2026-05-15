@@ -328,4 +328,50 @@ final class SecurityVectorStorageService {
     return (int) $query->execute()->fetchField();
   }
 
+  /**
+   * Gets entity IDs that have current results for a given type and bundle.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $bundle
+   *   The bundle.
+   *
+   * @return array<string|int>
+   *   Array of entity IDs with current results.
+   */
+  public function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
+    $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
+    $data_table = $entity_type->getDataTable() ?: $entity_type->getBaseTable();
+    $id_key = $entity_type->getKey('id');
+    $bundle_key = $entity_type->getKey('bundle');
+
+    if (!$data_table || !$id_key || !$bundle_key || !$this->database->schema()->fieldExists($data_table, 'changed')) {
+      return [];
+    }
+
+    $query = $this->database->select('analyze_ai_content_security_audit_results', 'r');
+    $query->addField('r', 'entity_id');
+    $query->join($data_table, 'e', "r.entity_id = e.$id_key");
+    $query->condition('r.entity_type', $entity_type_id);
+    $query->condition("e.$bundle_key", $bundle);
+    $query->condition('r.config_hash', $this->generateConfigHash());
+    $query->where('r.analyzed_timestamp >= e.changed');
+
+    $revision_key = $entity_type->getKey('revision');
+    if ($revision_key && $this->database->schema()->fieldExists($data_table, $revision_key)) {
+      $query->where("r.entity_revision_id = e.$revision_key");
+    }
+
+    $langcode_key = $entity_type->getKey('langcode');
+    if ($langcode_key
+      && $this->database->schema()->fieldExists($data_table, 'default_langcode')
+      && $this->database->schema()->fieldExists($data_table, $langcode_key)) {
+      $query->condition('e.default_langcode', 1);
+      $query->where("r.langcode = e.$langcode_key");
+    }
+
+    $query->distinct();
+    return $query->execute()->fetchCol();
+  }
+
 }
