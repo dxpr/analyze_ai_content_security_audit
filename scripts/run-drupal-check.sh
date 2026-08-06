@@ -3,9 +3,10 @@
 set -vo pipefail
 
 # Authenticate Composer against GitHub to avoid API rate limits, which
-# otherwise make Composer fall back to unauthenticated SSH clones.
+# otherwise make Composer fall back to unauthenticated SSH clones. Using
+# COMPOSER_AUTH keeps the token out of process arguments and auth.json.
 if [ -n "$GITHUB_TOKEN" ]; then
-  composer config -g github-oauth.github.com "$GITHUB_TOKEN"
+  export COMPOSER_AUTH="{\"github-oauth\": {\"github.com\": \"$GITHUB_TOKEN\"}}"
 fi
 
 # Install required libs for Drupal
