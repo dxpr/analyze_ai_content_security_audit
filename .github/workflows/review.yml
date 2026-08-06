@@ -23,5 +23,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Check Drupal compatibility
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         docker compose --profile lint run drupal-check

@@ -2,6 +2,12 @@
 
 set -vo pipefail
 
+# Authenticate Composer against GitHub to avoid API rate limits, which
+# otherwise make Composer fall back to unauthenticated SSH clones.
+if [ -n "$GITHUB_TOKEN" ]; then
+  composer config -g github-oauth.github.com "$GITHUB_TOKEN"
+fi
+
 # Install required libs for Drupal
 GD_ENABLED=$(php -i | grep 'GD Support' | awk '{ print $4 }')
 
@@ -41,7 +47,7 @@ composer require drupal/statistics --no-interaction
 
 # Install the matching Analyze branch until the new batch API is released.
 composer config repositories.dxpr-analyze vcs https://github.com/dxpr/analyze.git --no-interaction
-composer require "dxpr/analyze:1.1.x-dev" drupal/ai drupal/views_color_scales --no-interaction
+composer require "dxpr/analyze:1.1.x-dev" drupal/ai drupal/views_color_scales --no-interaction || exit 1
 
 # Install PHPStan extensions for Drupal 11 and Drush for command analysis
 composer require --dev phpstan/phpstan mglaman/phpstan-drupal phpstan/phpstan-deprecation-rules drush/drush --with-all-dependencies --no-interaction
