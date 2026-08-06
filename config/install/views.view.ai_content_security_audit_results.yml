@@ -215,6 +215,9 @@ display:
           color_scale_auto: 0
           color_scale_min_color: '#B3FFB3'
           color_scale_max_color: '#FFB3B3'
+          color_scale_min_label: 'No Risk'
+          color_scale_mid_label: 'Medium Risk'
+          color_scale_max_label: 'High Risk'
         analyzed_timestamp:
           id: analyzed_timestamp
           table: analyze_ai_content_security_audit_results
