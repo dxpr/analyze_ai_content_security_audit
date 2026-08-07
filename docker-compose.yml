@@ -22,10 +22,12 @@ services:
       - .:/src
 
   drupal-check:
-    image: composer:2.7
+    image: composer:2
     profiles: ["lint"]
     working_dir: /
     command: bash -c "/src/scripts/run-drupal-check.sh"
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
     tty: true
     volumes:
       - .:/src

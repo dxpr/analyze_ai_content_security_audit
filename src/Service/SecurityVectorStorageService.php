@@ -19,10 +19,10 @@ final class SecurityVectorStorageService {
   use DependencySerializationTrait;
 
   public function __construct(
-    private readonly Connection $database,
-    private readonly ConfigFactoryInterface $configFactory,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly RendererInterface $renderer,
+    protected readonly Connection $database,
+    protected readonly ConfigFactoryInterface $configFactory,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly RendererInterface $renderer,
   ) {
   }
 
