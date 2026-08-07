@@ -47,7 +47,7 @@ function analyze_ai_content_security_audit_views_pre_view(ViewExecutable $view, 
 /**
  * Implements hook_views_color_scale_popover_alter().
  */
-function analyze_ai_content_security_audit_views_color_scale_popover_alter(array &$content, array $context) {
+function analyze_ai_content_security_audit_views_color_scale_popover_alter(array &$content, array $context): void {
   if ($context['view']->storage->get('base_table') !== 'analyze_ai_content_security_audit_results') {
     return;
   }
