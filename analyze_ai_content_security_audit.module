@@ -43,3 +43,26 @@ function analyze_ai_content_security_audit_views_pre_view(ViewExecutable $view, 
     }
   }
 }
+
+/**
+ * Implements hook_views_color_scale_popover_alter().
+ */
+function analyze_ai_content_security_audit_views_color_scale_popover_alter(array &$content, array $context) {
+  if ($context['view']->storage->get('base_table') !== 'analyze_ai_content_security_audit_results') {
+    return;
+  }
+  $content = [
+    '#theme' => 'analyze_gauge',
+    '#caption' => '',
+    '#range_min_label' => t('No Risk'),
+    '#range_mid_label' => t('Medium Risk'),
+    '#range_max_label' => t('High Risk'),
+    '#range_min' => $context['min'],
+    '#value' => $context['position'],
+    '#display_value' => $context['display_value'],
+    '#range_max' => $context['max'],
+    '#attached' => [
+      'library' => ['analyze/gauge-popover'],
+    ],
+  ];
+}
