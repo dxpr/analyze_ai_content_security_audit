@@ -53,7 +53,7 @@ function analyze_ai_content_security_audit_views_color_scale_popover_alter(array
   }
   $content = [
     '#theme' => 'analyze_gauge',
-    '#caption' => '',
+    '#caption' => $context['field_options']['label'] ?? '',
     '#range_min_label' => t('No Risk'),
     '#range_mid_label' => t('Medium Risk'),
     '#range_max_label' => t('High Risk'),
