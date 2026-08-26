@@ -2,7 +2,9 @@
 
 <h2>Sensitive Data Leaks in Content Are Invisible Until They're Not</h2>
 
-<blockquote>A support article accidentally includes a customer's email. A developer pastes an API key into a documentation page. A case study reveals a client's internal project name. These things happen - and by the time someone notices, the damage is done. This module scans every piece of content for security risks before they become incidents.</blockquote>
+<blockquote>A support article accidentally includes a customer's email. A developer pastes an API key into a documentation page. A case study reveals a client's internal project name. These things happen, and by the time someone notices, the damage is done. This module scans every piece of content for security risks before they become incidents.</blockquote>
+
+<p><img src="/files/project-images/content-security-audit-full-report.jpg" alt="Content Security Audit full report showing PII Disclosure and Credentials Disclosure risk gauges both at low risk" /></p>
 
 <h3>You need AI Content Security Audit if</h3>
 <ul>
@@ -16,23 +18,23 @@
 <ul>
   <li>
     <strong>Risk score per page (0-100)</strong>
-    <p>Every content entity gets a security risk score per detection vector - 0 means no risk, 100 means critical. Displayed as a visual gauge so editors immediately see which pages need attention.</p>
+    <p>Every content entity gets a security risk score per detection vector: 0 means no risk, 100 means critical. Displayed as a visual gauge so editors immediately see which pages need attention.</p>
   </li>
   <li>
     <strong>Built-in detection for common leaks</strong>
     <p>Ships with two security vectors ready to go:</p>
     <ul>
-      <li><strong>PII Disclosure</strong> - names, addresses, phone numbers, SSNs, email addresses</li>
-      <li><strong>Credentials Disclosure</strong> - API keys, passwords, tokens, database credentials</li>
+      <li><strong>PII Disclosure</strong>: names, addresses, phone numbers, SSNs, email addresses</li>
+      <li><strong>Credentials Disclosure</strong>: API keys, passwords, tokens, database credentials</li>
     </ul>
   </li>
   <li>
     <strong>Custom security vectors</strong>
-    <p>Add your own detection vectors for organization-specific risks - proprietary project names, internal URLs, partner data, anything your security policy requires.</p>
+    <p>Add your own detection vectors for organisation-specific risks: proprietary project names, internal URLs, partner data, anything your security policy requires.</p>
   </li>
   <li>
     <strong>Batch scanning for existing content</strong>
-    <p>Audit your entire content library to find pages that were published before security review was in place. Prioritize remediation by risk score.</p>
+    <p>Audit your entire content library to find pages that were published before security review was in place. Prioritise remediation by risk score.</p>
   </li>
   <li>
     <h3>AI Coding Assistant Integration</h3>
@@ -66,8 +68,8 @@
 
 <div class="note-tip">
   <h4>Prefer a turnkey demo site?</h4>
-  <p>Spin up <strong>DXPR CMS</strong> - Drupal pre-configured with DXPR Builder, DXPR Theme, the full Analyze suite including AI Security Audit, and security best practices out of the box.</p>
-  <p><a href="https://www.drupal.org/project/dxpr_cms" title="DXPR CMS platform">Get DXPR CMS »</a></p>
+  <p>Spin up <strong>DXPR CMS</strong>: Drupal pre-configured with DXPR Builder, DXPR Theme, the full Analyze suite including AI Security Audit, and security best practices out of the box.</p>
+  <p><a href="https://www.drupal.org/project/dxpr_cms" title="DXPR CMS platform">Get DXPR CMS &raquo;</a></p>
 </div>
 
 <h3 id="module-project--additional-requirements">Additional requirements</h3>
@@ -84,7 +86,7 @@
 <ul>
 <li><a href="https://www.drupal.org/project/analyze">Analyze</a> - Required. Provides the plugin framework, Analyze tab, and batch processing this module extends</li>
 <li><a href="https://www.drupal.org/project/ai">AI</a> - Required. Supplies the LLM provider used for evaluating content against security vectors</li>
-<li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> - Required. Renders color-coded risk score columns in the security audit Views report</li>
+<li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> - Required. Renders colour-coded risk score columns in the security audit Views report</li>
 <li><a href="https://www.drupal.org/project/analyze_ai_content_marketing_audit">AI Content Marketing Audit</a> - Sibling Analyze plugin that scores marketing effectiveness</li>
 <li><a href="https://www.drupal.org/project/analyze_ai_sentiments">AI Sentiments Analysis</a> - Sibling Analyze plugin that measures tone, trust, and reading level</li>
 <li><a href="https://www.drupal.org/project/analyze_broken_links">Analyze Broken Links</a> - Sibling Analyze plugin that checks link health without AI</li>
