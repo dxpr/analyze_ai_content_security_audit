@@ -20,7 +20,7 @@ function analyze_ai_content_security_audit_views_pre_view(ViewExecutable $view, 
   if ($view->id() === 'ai_content_security_audit_results' && $display_id === 'page_1') {
     // Build the settings link if user has permission.
     $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('administer analyze settings')) {
+    if ($current_user->hasPermission('administer analyze')) {
       $settings_url = Url::fromRoute('analyze_ai_content_security_audit.settings');
       if ($settings_url->access()) {
         $link = Link::fromTextAndUrl(t('Configure settings'), $settings_url);

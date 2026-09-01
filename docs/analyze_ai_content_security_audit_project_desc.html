@@ -4,7 +4,7 @@
 
 <blockquote>A support article accidentally includes a customer's email. A developer pastes an API key into a documentation page. A case study reveals a client's internal project name. These things happen, and by the time someone notices, the damage is done. This module scans every piece of content for security risks before they become incidents.</blockquote>
 
-<p><img src="/files/project-images/content_security_audit.jpg" alt="Content Security Audit full report showing PII Disclosure and Credentials Disclosure risk gauges both at low risk" /></p>
+<p><a href="/files/project-images/content_security_audit.jpg"><img src="/files/project-images/content_security_audit.jpg" alt="Content Security Audit full report showing PII Disclosure and Credentials Disclosure risk gauges both at low risk" /></a></p>
 
 <h3>You need AI Content Security Audit if</h3>
 <ul>
@@ -81,6 +81,25 @@
     <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module</li>
   </ul>
 </p>
+
+<h2>FAQ</h2>
+
+<dl>
+  <dt>What types of sensitive data does it detect?</dt>
+  <dd>
+    <p>The module ships with two built-in detection vectors: PII Disclosure (names, addresses, phone numbers, SSNs, email addresses) and Credentials Disclosure (API keys, passwords, tokens, database credentials). Each vector scores content from 0 (no risk) to 100 (critical). Custom vectors can be added for organisation-specific risks such as proprietary project names or internal URLs.</p>
+  </dd>
+
+  <dt>Does the security audit run automatically?</dt>
+  <dd>
+    <p>Scores are computed when you view the Analyze tab on a content entity or run a batch analysis. The module does not scan in the background unprompted; you trigger scanning either per-page or across your entire content library. Results are cached and only recomputed when content changes.</p>
+  </dd>
+
+  <dt>Is this module suitable for compliance requirements?</dt>
+  <dd>
+    <p>The module helps teams comply with GDPR, HIPAA, and SOC 2 requirements by screening content for personal data and credentials before publication. It does not replace a formal compliance programme, but it catches accidental disclosures that manual review routinely misses, especially across large content libraries.</p>
+  </dd>
+</dl>
 
 <h3>Related Modules</h3>
 <ul>

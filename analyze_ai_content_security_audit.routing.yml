@@ -4,7 +4,7 @@ analyze_ai_content_security_audit.settings:
     _form: 'Drupal\analyze_ai_content_security_audit\Form\SecurityVectorSettingsForm'
     _title: 'Content Security Audit Settings'
   requirements:
-    _permission: 'administer analyze settings'
+    _permission: 'administer analyze'
 
 analyze_ai_content_security_audit.vector.add:
   path: '/admin/config/analyze/content-security-audit/vector/add'
@@ -12,7 +12,7 @@ analyze_ai_content_security_audit.vector.add:
     _form: 'Drupal\analyze_ai_content_security_audit\Form\AddVectorForm'
     _title: 'Add Security Vector'
   requirements:
-    _permission: 'administer analyze settings'
+    _permission: 'administer analyze'
 
 analyze_ai_content_security_audit.vector.delete:
   path: '/admin/config/analyze/content-security-audit/vector/{vector_id}/delete'
@@ -20,4 +20,4 @@ analyze_ai_content_security_audit.vector.delete:
     _form: 'Drupal\analyze_ai_content_security_audit\Form\DeleteVectorForm'
     _title: 'Delete Security Vector'
   requirements:
-    _permission: 'administer analyze settings'
+    _permission: 'administer analyze'
