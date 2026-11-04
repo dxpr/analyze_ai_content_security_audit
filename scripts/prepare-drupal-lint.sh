@@ -16,13 +16,13 @@ echo "TARGET_DRUPAL_CORE_VERSION: $TARGET_DRUPAL_CORE_VERSION"
 # Add this line to avoid the plugin prompt
 composer config --global allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 
-composer global require drupal/coder --dev
+composer global require drupal/coder --dev || exit 1
 # Install PHPCompatibility dev branch for phpcs v4 support.
-composer global require phpcompatibility/php-compatibility:dev-develop --dev
+composer global require phpcompatibility/php-compatibility:dev-develop --dev || exit 1
 
 export PATH="$PATH:$COMPOSER_HOME/vendor/bin"
 
-composer global require dealerdirect/phpcodesniffer-composer-installer --dev
+composer global require dealerdirect/phpcodesniffer-composer-installer --dev || exit 1
 
 composer global show -P
 phpcs -i
