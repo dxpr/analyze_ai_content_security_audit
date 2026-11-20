@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_content_security_audit\Plugin\Analyze;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
@@ -28,6 +29,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Analyzes content for security risks using AI.")
  * )
  */
+#[\Drupal\analyze\Attribute\Analyze(
+  id: "analyze_ai_content_security_audit_analyzer",
+  label: new TranslatableMarkup("Content Security Audit"),
+  description: new TranslatableMarkup("Analyzes content for security risks using AI."),
+)]
 final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
   /**
    * The AI provider manager.
@@ -411,7 +417,7 @@ final class AIContentSecurityAuditAnalyzer extends AnalyzePluginBase implements 
     // Replace multiple whitespace characters (spaces, tabs, newlines)
     // with a single space.
     $content = preg_replace('/\s+/', ' ', $content);
-    $content = trim($content);
+    $content = trim($content, " \n\r\t\v\0");
 
     return $content;
   }

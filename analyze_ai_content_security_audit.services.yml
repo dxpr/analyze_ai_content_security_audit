@@ -6,6 +6,8 @@ services:
   Drupal\analyze_ai_content_security_audit\Hook\AnalyzeAiContentSecurityAuditHooks:
     class: Drupal\analyze_ai_content_security_audit\Hook\AnalyzeAiContentSecurityAuditHooks
     autowire: true
+    arguments:
+      - '@current_user'
 
   Drupal\analyze_ai_content_security_audit\Hook\AnalyzeAiContentSecurityAuditViewsHooks:
     class: Drupal\analyze_ai_content_security_audit\Hook\AnalyzeAiContentSecurityAuditViewsHooks
