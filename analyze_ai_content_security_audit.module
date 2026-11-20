@@ -8,61 +8,22 @@
  * potential PII disclosure, credential exposure, and sensitive leaks.
  */
 
-use Drupal\Core\Link;
-use Drupal\Core\Url;
+use Drupal\Core\Hook\Attribute\LegacyHook;
+use Drupal\analyze_ai_content_security_audit\Hook\AnalyzeAiContentSecurityAuditHooks;
 use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_views_pre_view().
  */
+#[LegacyHook]
 function analyze_ai_content_security_audit_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
-  // Add settings link to the content security audit view header.
-  if ($view->id() === 'ai_content_security_audit_results' && $display_id === 'page_1') {
-    // Build the settings link if user has permission.
-    $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('administer analyze')) {
-      $settings_url = Url::fromRoute('analyze_ai_content_security_audit.settings');
-      if ($settings_url->access()) {
-        $link = Link::fromTextAndUrl(t('Configure settings'), $settings_url);
-        $link = $link->toRenderable();
-        $link['#attributes']['class'][] = 'button';
-        $link['#attributes']['class'][] = 'button--small';
-        $link['#attributes']['class'][] = 'button--primary';
-
-        // Add content before the view using attachment_before as render array.
-        $view->attachment_before = [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['form-actions', 'views-configure-actions']],
-          '#weight' => -10,
-          'configure_link' => $link,
-          '#attached' => [
-            'library' => ['system/base'],
-          ],
-        ];
-      }
-    }
-  }
+  \Drupal::service(AnalyzeAiContentSecurityAuditHooks::class)->viewsPreView($view, $display_id, $args);
 }
 
 /**
  * Implements hook_views_color_scale_popover_alter().
  */
+#[LegacyHook]
 function analyze_ai_content_security_audit_views_color_scale_popover_alter(array &$content, array $context): void {
-  if ($context['view']->storage->get('base_table') !== 'analyze_ai_content_security_audit_results') {
-    return;
-  }
-  $content = [
-    '#theme' => 'analyze_gauge',
-    '#caption' => $context['field_options']['label'] ?? '',
-    '#range_min_label' => t('No Risk'),
-    '#range_mid_label' => t('Medium Risk'),
-    '#range_max_label' => t('High Risk'),
-    '#range_min' => $context['min'],
-    '#value' => $context['position'],
-    '#display_value' => $context['display_value'],
-    '#range_max' => $context['max'],
-    '#attached' => [
-      'library' => ['analyze/gauge-popover'],
-    ],
-  ];
+  \Drupal::service(AnalyzeAiContentSecurityAuditHooks::class)->viewsColorScalePopoverAlter($content, $context);
 }
